@@ -20,6 +20,8 @@
 ```
 quantum-edu-be/
 ├── pom.xml                          # Parent POM (aggregates modules, defines versions)
+├── modules/
+│   └── common/                      # Shared DTOs, ApiResponse, base exceptions
 ├── docs/
 │   ├── API_RESPONSE_FORMAT.md
 │   ├── AUTH_API_SPEC.md
@@ -103,6 +105,18 @@ quantum-edu-be/
 |--------|------------|--------|
 | auth | user-management | Create user profile on signup |
 | app | auth, user-management, ... | Wire and run all modules |
+
+---
+
+## Configuration
+
+Each module and the app have three environment-specific property files:
+- `application.properties` — Base config
+- `application-dev.properties` — Development (H2, email enabled)
+- `application-staging.properties` — Staging (MySQL, email enabled)
+- `application-prod.properties` — Production (MySQL, email enabled)
+
+Use `-Dspring.profiles.active=dev|staging|prod` or `SPRING_PROFILES_ACTIVE=dev|staging|prod`.
 
 ---
 

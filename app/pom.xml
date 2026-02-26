@@ -18,11 +18,36 @@
     <dependencies>
         <dependency>
             <groupId>com.quantum.edu</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.quantum.edu</groupId>
             <artifactId>auth</artifactId>
         </dependency>
         <dependency>
             <groupId>com.quantum.edu</groupId>
             <artifactId>user-management</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.quantum.edu</groupId>
+            <artifactId>product-catalogue</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.quantum.edu</groupId>
+            <artifactId>ownership</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.quantum.edu</groupId>
+            <artifactId>cart</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

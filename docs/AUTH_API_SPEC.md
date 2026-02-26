@@ -353,6 +353,73 @@ Always returns success for valid, unverified email (prevents email enumeration).
 
 ---
 
+## Testing with curl
+
+Base URL: `http://localhost:8080` (when app is running)
+
+### Health check
+```bash
+curl -s http://localhost:8080/health
+```
+
+### Signup
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123","firstName":"Test","lastName":"User"}'
+```
+
+### Login (before verification — expect 403)
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+```
+
+### Verify email
+Get token from DB: `mysql -u root -proot quantum_education -N -e "SELECT email_verification_token FROM auth_user WHERE email='test@example.com';"`
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/verify-email \
+  -H "Content-Type: application/json" \
+  -d '{"token":"<TOKEN_FROM_DB>"}'
+```
+
+### Login (after verification — expect 200 + JWT)
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+```
+
+### Resend verification
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/resend-verification \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+```
+
+### Validation error (expect 400)
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"invalid","password":"short","firstName":""}'
+```
+
+### Invalid credentials (expect 401)
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"nonexistent@example.com","password":"wrong"}'
+```
+
+### Verify MySQL data
+```bash
+mysql -u root -proot quantum_education -e "SELECT id, email, is_verified FROM auth_user;"
+mysql -u root -proot quantum_education -e "SELECT user_id, first_name, last_name FROM user_profile;"
+```
+
+---
+
 ## Versioning
 
 - Base path includes version: `/api/v1/auth`

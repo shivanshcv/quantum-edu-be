@@ -27,6 +27,15 @@ quantum-edu-be/
 - JDK 21
 - Maven 3.6+
 
+## IDE Setup (Lombok)
+
+This project uses Lombok. If you see compilation errors in your IDE (e.g. "cannot find symbol: method builder()") while Maven builds succeed:
+
+1. **Enable annotation processing** — IntelliJ: *Settings → Build, Execution, Deployment → Compiler → Annotation Processors* → check **Enable annotation processing**
+2. Install the **Lombok plugin** if your IDE doesn't include it (IntelliJ: *Settings → Plugins*)
+
+Maven runs Lombok via `maven-compiler-plugin`'s `annotationProcessorPaths`; the IDE uses its own compiler and must have annotation processing enabled.
+
 ## Building
 
 ```bash
@@ -39,6 +48,15 @@ mvn clean install
 mvn -pl app spring-boot:run
 ```
 
+**Environment profiles:**
+- `dev` (default) — MySQL (quantum_education, root/root), email enabled. Use for local testing.
+- `staging` / `prod` — Placeholder config; exact values to be provided later.
+
+```bash
+# Staging/Production
+SPRING_PROFILES_ACTIVE=staging mvn -pl app spring-boot:run
+```
+
 ## Running Tests
 
 ```bash
@@ -48,6 +66,10 @@ mvn test
 ## Endpoints
 
 - `GET /health` — Health check (returns `{"status":"UP"}`)
+- `POST /api/v1/auth/signup` — User registration
+- `POST /api/v1/auth/login` — User login
+- `POST /api/v1/auth/verify-email` — Email verification
+- `POST /api/v1/auth/resend-verification` — Resend verification email
 
 ## API Documentation
 
