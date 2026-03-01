@@ -32,13 +32,13 @@ Use `mysqldump` to export, then import into Aiven. From your machine:
 # 1. Export local database (--no-create-db so we can import into defaultdb)
 mysqldump -h 127.0.0.1 -u root -proot --no-create-db quantum_education > /tmp/quantum_education_dump.sql
 
-# 2. Import into Aiven defaultdb
-mysql -h mysql-6893282-shivansh-6f29.j.aivencloud.com -P 25679 -u avnadmin -p'AVNS_KWtdkyf0G53dGuJmUy-' defaultdb < /tmp/quantum_education_dump.sql
+# 2. Import into Aiven defaultdb (replace placeholders with your Aiven credentials)
+mysql -h <AIVEN_HOST> -P <AIVEN_PORT> -u <AIVEN_USER> -p'<AIVEN_PASSWORD>' <AIVEN_DATABASE> < /tmp/quantum_education_dump.sql
 ```
 
 **One-liner** (dump and import in one go):
 ```bash
-mysqldump -h 127.0.0.1 -u root -proot --no-create-db quantum_education | mysql -h mysql-6893282-shivansh-6f29.j.aivencloud.com -P 25679 -u avnadmin -p'AVNS_KWtdkyf0G53dGuJmUy-' defaultdb
+mysqldump -h 127.0.0.1 -u root -proot --no-create-db quantum_education | mysql -h <AIVEN_HOST> -P <AIVEN_PORT> -u <AIVEN_USER> -p'<AIVEN_PASSWORD>' <AIVEN_DATABASE>
 ```
 
 **Note:** `--no-create-db` puts all tables into `defaultdb`. Keep `MYSQL_DATABASE=defaultdb` in Render.
