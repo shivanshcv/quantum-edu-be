@@ -56,16 +56,21 @@ mysql -h <AIVEN_HOST> -P <AIVEN_PORT> -u <AIVEN_USER> -p<AIVEN_PASSWORD> <AIVEN_
 
 ### Step 3: Deploy Backend on Render
 
+**Important:** Render's native env has no Java/Maven. Use **Docker** (Dockerfile included).
+
 1. Go to [render.com](https://render.com) → Sign up with GitHub
 2. **New** → **Web Service**
 3. Connect `quantum-edu-be` repo
-4. **Build & Deploy:**
-   - **Build Command:** `mvn clean package -DskipTests`
-   - **Start Command:** `java -Dspring.profiles.active=staging -jar app/target/quantum-edu-be-app-0.0.1-SNAPSHOT.jar`
+4. In the setup form, find the **Environment** or **Language** dropdown (often near the top). Set it to **Docker**.
+5. **Build & Deploy:**
+   - **Dockerfile Path:** `./Dockerfile` (or leave blank if in repo root)
    - **Instance Type:** Free
-5. **Environment** → Add variables (see table below)
-6. **Save** → Render will build and deploy
-7. Note your service URL (e.g. `https://quantum-edu-be-staging.onrender.com`)
+   - Clear any **Build Command** or **Start Command** – the Dockerfile handles both
+6. **Environment** → Add variables (see table below)
+7. **Create Web Service** → Render will build and deploy
+8. Note your service URL (e.g. `https://quantum-edu-be-staging.onrender.com`)
+
+**If you already created a service:** Render may not let you change Language after creation. Delete the service and create a new one, selecting **Docker** as the Environment/Language when prompted.
 
 ### Step 4: Environment Variables for Staging
 
