@@ -21,8 +21,8 @@ RUN mvn dependency:go-offline -B -q || true
 COPY . .
 RUN mvn clean package -DskipTests -B -q
 
-# Run stage - Java 21 JRE
-FROM eclipse-temurin:21-jre-alpine
+# Run stage - Java 21 JRE (use non-Alpine: Alpine + musl causes SIGSEGV with BCrypt/native libs)
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 COPY --from=build /app/app/target/quantum-edu-be-app-0.0.1-SNAPSHOT.jar app.jar
