@@ -1,10 +1,14 @@
 package com.quantum.edu.catalogue.service;
 
+import com.quantum.edu.catalogue.domain.Assessment;
 import com.quantum.edu.catalogue.domain.Category;
+import com.quantum.edu.catalogue.domain.Lesson;
 import com.quantum.edu.catalogue.domain.Product;
 import com.quantum.edu.catalogue.domain.ProductContent;
 import com.quantum.edu.catalogue.dto.*;
+import com.quantum.edu.catalogue.repository.AssessmentRepository;
 import com.quantum.edu.catalogue.repository.CategoryRepository;
+import com.quantum.edu.catalogue.repository.LessonRepository;
 import com.quantum.edu.catalogue.repository.ProductRepository;
 import com.quantum.edu.common.exception.InternalErrorCode;
 import com.quantum.edu.common.exception.InternalException;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,10 +27,17 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final LessonRepository lessonRepository;
+    private final AssessmentRepository assessmentRepository;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository,
+                          CategoryRepository categoryRepository,
+                          LessonRepository lessonRepository,
+                          AssessmentRepository assessmentRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.lessonRepository = lessonRepository;
+        this.assessmentRepository = assessmentRepository;
     }
 
     @Transactional
@@ -122,7 +134,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDetailResponse getPublishedById(Long id) {
-        Product product = productRepository.findByIdAndPublishedTrue(id)
+        Product product = productRepository.findByIdAndPublishedTrueWithContents(id)
                 .orElseThrow(() -> new InternalException(InternalErrorCode.PRODUCT_NOT_FOUND));
         return toDetailResponse(product);
     }
@@ -132,6 +144,23 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new InternalException(InternalErrorCode.PRODUCT_NOT_FOUND));
         return toDetailResponse(product);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductListResponse> getFeaturedProducts() {
+        return productRepository.findByPublishedTrueAndFeaturedTrue()
+                .stream()
+                .map(this::toListResponse)
+                .toList();
+    }
+
+    @Transactional
+    public ProductListResponse setFeatured(Long id, boolean featured) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new InternalException(InternalErrorCode.PRODUCT_NOT_FOUND));
+        product.setFeatured(featured);
+        product = productRepository.save(product);
+        return toListResponse(product);
     }
 
     private ProductListResponse toListResponse(Product product) {
@@ -167,6 +196,19 @@ public class ProductService {
                 .map(this::toContentSummary)
                 .toList();
 
+        List<ProductDetailResponse.ModuleSummary> modules = product.getModules().stream()
+                .map(m -> ProductDetailResponse.ModuleSummary.builder()
+                        .id(m.getId())
+                        .title(m.getTitle())
+                        .orderIndex(m.getOrderIndex())
+                        .contents(product.getContents().stream()
+                                .filter(c -> c.getModule() != null && c.getModule().getId().equals(m.getId()))
+                                .sorted(Comparator.comparingInt(ProductContent::getOrderIndex))
+                                .map(this::toContentSummary)
+                                .toList())
+                        .build())
+                .toList();
+
         return ProductDetailResponse.builder()
                 .id(product.getId())
                 .title(product.getTitle())
@@ -180,20 +222,68 @@ public class ProductService {
                 .difficultyLevel(product.getDifficultyLevel() != null ? product.getDifficultyLevel().name() : null)
                 .durationMinutes(product.getDurationMinutes())
                 .published(product.isPublished())
+                .attributes(product.getAttributes())
                 .categories(categories)
                 .contents(contents)
+                .modules(modules)
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
     }
 
     private ProductDetailResponse.ContentSummary toContentSummary(ProductContent content) {
+        Integer durationSeconds = null;
+        String videoUrl = null;
+        String pdfUrl = null;
+        String lessonType = null;
+        ProductDetailResponse.AssessmentSummary assessmentSummary = null;
+
+        if (content.getContentType() == ProductContent.ContentType.LESSON) {
+            Lesson lesson = lessonRepository.findByProductContentId(content.getId()).orElse(null);
+            if (lesson != null) {
+                durationSeconds = lesson.getDurationSeconds();
+                videoUrl = lesson.getVideoUrl();
+                pdfUrl = lesson.getPdfUrl();
+                lessonType = lesson.getLessonType().name();
+            }
+        } else if (content.getContentType() == ProductContent.ContentType.ASSESSMENT) {
+            assessmentSummary = assessmentRepository.findByProductContentIdWithQuestionsAndOptions(content.getId())
+                    .map(this::toAssessmentSummary)
+                    .orElse(null);
+        }
+
         return ProductDetailResponse.ContentSummary.builder()
                 .id(content.getId())
                 .contentType(content.getContentType().name())
                 .title(content.getTitle())
                 .orderIndex(content.getOrderIndex())
                 .mandatory(content.isMandatory())
+                .moduleId(content.getModule() != null ? content.getModule().getId() : null)
+                .durationSeconds(durationSeconds)
+                .videoUrl(videoUrl)
+                .pdfUrl(pdfUrl)
+                .lessonType(lessonType)
+                .assessment(assessmentSummary)
+                .build();
+    }
+
+    private ProductDetailResponse.AssessmentSummary toAssessmentSummary(Assessment assessment) {
+        List<ProductDetailResponse.QuestionSummary> questions = assessment.getQuestions().stream()
+                .map(q -> ProductDetailResponse.QuestionSummary.builder()
+                        .id(q.getId())
+                        .questionText(q.getQuestionText())
+                        .options(q.getOptions().stream()
+                                .map(o -> ProductDetailResponse.OptionSummary.builder()
+                                        .id(o.getId())
+                                        .optionText(o.getOptionText())
+                                        .build())
+                                .toList())
+                        .build())
+                .toList();
+
+        return ProductDetailResponse.AssessmentSummary.builder()
+                .passPercentage(assessment.getPassPercentage())
+                .questions(questions)
                 .build();
     }
 }

@@ -97,7 +97,7 @@ public class Order {
         this.billingCountry = billing.country;
         this.billingPostalCode = billing.postalCode;
         this.billingGstNumber = billing.gstNumber;
-        this.status = OrderStatus.CREATED;
+        this.status = OrderStatus.INITIATED;
     }
 
     public Long getId() {
@@ -161,7 +161,10 @@ public class Order {
     }
 
     public enum OrderStatus {
-        CREATED, PAYMENT_PENDING, PAID, FAILED
+        INITIATED,  // Order created, not yet sent to payment gateway
+        PENDING,    // Payment pending at gateway
+        SUCCESS,    // Payment success, order complete
+        FAILED      // Payment failed, order failed
     }
 
     public record BillingInfo(String name, String addressLine1, String addressLine2,

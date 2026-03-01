@@ -1,6 +1,8 @@
 package com.quantum.edu.catalogue.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -10,8 +12,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "product", indexes = {
-        @Index(name = "idx_product_is_published", columnList = "is_published")
+        @Index(name = "idx_product_is_published", columnList = "is_published"),
+        @Index(name = "idx_product_published_featured", columnList = "is_published, is_featured")
 })
+@Getter
+@Setter
+@NoArgsConstructor
 public class Product {
 
     @Id
@@ -53,6 +59,13 @@ public class Product {
     @Column(name = "is_published", nullable = false)
     private boolean published = false;
 
+    @Column(name = "is_featured", nullable = false)
+    private boolean featured = false;
+
+    @Convert(converter = ProductAttributesConverter.class)
+    @Column(columnDefinition = "json")
+    private ProductAttributes attributes;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_category",
@@ -66,6 +79,10 @@ public class Product {
     @OrderBy("orderIndex ASC")
     private List<ProductContent> contents = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderIndex ASC")
+    private List<ProductModule> modules = new ArrayList<>();
+
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false,
             columnDefinition = "datetime(6) default current_timestamp(6)")
     private Instant createdAt;
@@ -73,9 +90,6 @@ public class Product {
     @Column(name = "updated_at", nullable = false, updatable = false, insertable = false,
             columnDefinition = "datetime(6) default current_timestamp(6) on update current_timestamp(6)")
     private Instant updatedAt;
-
-    protected Product() {
-    }
 
     public Product(String title, String slug, String shortDescription, String longDescription,
                    BigDecimal price, DifficultyLevel difficultyLevel) {
@@ -85,39 +99,6 @@ public class Product {
         this.longDescription = longDescription;
         this.price = price;
         this.difficultyLevel = difficultyLevel;
-    }
-
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public String getSlug() { return slug; }
-    public String getShortDescription() { return shortDescription; }
-    public String getLongDescription() { return longDescription; }
-    public BigDecimal getPrice() { return price; }
-    public BigDecimal getDiscountPrice() { return discountPrice; }
-    public String getThumbnailUrl() { return thumbnailUrl; }
-    public String getPreviewVideoUrl() { return previewVideoUrl; }
-    public DifficultyLevel getDifficultyLevel() { return difficultyLevel; }
-    public Integer getDurationMinutes() { return durationMinutes; }
-    public boolean isPublished() { return published; }
-    public Set<Category> getCategories() { return categories; }
-    public List<ProductContent> getContents() { return contents; }
-    public Instant getCreatedAt() { return createdAt; }
-    public Instant getUpdatedAt() { return updatedAt; }
-
-    public void setTitle(String title) { this.title = title; }
-    public void setSlug(String slug) { this.slug = slug; }
-    public void setShortDescription(String s) { this.shortDescription = s; }
-    public void setLongDescription(String s) { this.longDescription = s; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public void setDiscountPrice(BigDecimal p) { this.discountPrice = p; }
-    public void setThumbnailUrl(String url) { this.thumbnailUrl = url; }
-    public void setPreviewVideoUrl(String url) { this.previewVideoUrl = url; }
-    public void setDifficultyLevel(DifficultyLevel d) { this.difficultyLevel = d; }
-    public void setDurationMinutes(Integer m) { this.durationMinutes = m; }
-    public void setPublished(boolean published) { this.published = published; }
-
-    public void setCategories(Set<Category> categories) {
-        this.categories = categories;
     }
 
     public enum DifficultyLevel {

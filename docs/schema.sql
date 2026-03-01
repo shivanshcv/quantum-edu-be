@@ -79,11 +79,14 @@ CREATE TABLE product (
     difficulty_level VARCHAR(20),
     duration_minutes INT,
     is_published TINYINT(1) NOT NULL DEFAULT 0,
+    is_featured TINYINT(1) NOT NULL DEFAULT 0,
+    attributes JSON,
     created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     PRIMARY KEY (id),
     UNIQUE KEY uk_product_slug (slug),
-    KEY idx_product_is_published (is_published)
+    KEY idx_product_is_published (is_published),
+    KEY idx_product_published_featured (is_published, is_featured)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
@@ -99,11 +102,27 @@ CREATE TABLE product_category (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- 6. product_content
+-- 9. product_module
+-- ---------------------------------------------------------------------------
+CREATE TABLE product_module (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    product_id BIGINT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    order_index INT NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_product_module_order (product_id, order_index),
+    KEY idx_product_module_product_id (product_id),
+    CONSTRAINT fk_product_module_product FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------------
+-- 10. product_content
 -- ---------------------------------------------------------------------------
 CREATE TABLE product_content (
     id BIGINT NOT NULL AUTO_INCREMENT,
     product_id BIGINT NOT NULL,
+    module_id BIGINT,
     content_type VARCHAR(20) NOT NULL,
     title VARCHAR(255) NOT NULL,
     order_index INT NOT NULL,
@@ -112,7 +131,9 @@ CREATE TABLE product_content (
     PRIMARY KEY (id),
     UNIQUE KEY uk_product_content_order (product_id, order_index),
     KEY idx_product_content_product_id (product_id),
-    CONSTRAINT fk_product_content_product FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE
+    KEY idx_product_content_module_id (module_id),
+    CONSTRAINT fk_product_content_product FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
+    CONSTRAINT fk_product_content_module FOREIGN KEY (module_id) REFERENCES product_module (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
@@ -234,4 +255,37 @@ CREATE TABLE course_ownership (
     KEY idx_ownership_user_course (user_id, course_id),
     CONSTRAINT fk_ownership_user FOREIGN KEY (user_id) REFERENCES auth_user (id),
     CONSTRAINT fk_ownership_order FOREIGN KEY (order_id) REFERENCES orders (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------------
+-- 14. user_lesson_progress
+-- ---------------------------------------------------------------------------
+CREATE TABLE user_lesson_progress (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    product_content_id BIGINT NOT NULL,
+    completed_at DATETIME(6) NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_progress_user_content (user_id, product_content_id),
+    KEY idx_progress_user (user_id),
+    CONSTRAINT fk_progress_user FOREIGN KEY (user_id) REFERENCES auth_user (id) ON DELETE CASCADE,
+    CONSTRAINT fk_progress_content FOREIGN KEY (product_content_id) REFERENCES product_content (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------------
+-- 15. user_assessment_result (quiz pass tracking for LMS)
+-- ---------------------------------------------------------------------------
+CREATE TABLE user_assessment_result (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    product_content_id BIGINT NOT NULL,
+    passed TINYINT(1) NOT NULL,
+    score_percentage INT NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_user_assessment_result (user_id, product_content_id),
+    KEY idx_user_assessment_user (user_id),
+    CONSTRAINT fk_user_assessment_user FOREIGN KEY (user_id) REFERENCES auth_user (id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_assessment_content FOREIGN KEY (product_content_id) REFERENCES product_content (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

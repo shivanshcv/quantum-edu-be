@@ -25,6 +25,8 @@
         <module>modules/product-catalogue</module>
         <module>modules/ownership</module>
         <module>modules/cart</module>
+        <module>modules/lms</module>
+        <module>modules/bff</module>
         <module>app</module>
     </modules>
 
@@ -92,6 +94,16 @@
             <dependency>
                 <groupId>com.quantum.edu</groupId>
                 <artifactId>cart</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.quantum.edu</groupId>
+                <artifactId>lms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.quantum.edu</groupId>
+                <artifactId>bff</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

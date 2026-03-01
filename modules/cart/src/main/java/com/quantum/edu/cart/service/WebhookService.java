@@ -34,10 +34,10 @@ public class WebhookService {
         }
         Instant purchasedAt = Instant.now();
         for (Order order : orders) {
-            if (order.getStatus() == Order.OrderStatus.PAID) {
+            if (order.getStatus() == Order.OrderStatus.SUCCESS) {
                 continue;
             }
-            order.setStatus(Order.OrderStatus.PAID);
+            order.setStatus(Order.OrderStatus.SUCCESS);
             order.setPaymentGatewayPaymentId(razorpayPaymentId);
             orderRepository.save(order);
             ownershipApi.createOwnership(order.getUserId(), order.getProductId(), order.getId());

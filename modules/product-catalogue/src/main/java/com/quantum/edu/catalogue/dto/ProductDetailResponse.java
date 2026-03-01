@@ -1,5 +1,7 @@
 package com.quantum.edu.catalogue.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.quantum.edu.catalogue.domain.ProductAttributes;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductDetailResponse {
 
     private Long id;
@@ -25,8 +28,10 @@ public class ProductDetailResponse {
     private String difficultyLevel;
     private Integer durationMinutes;
     private boolean published;
+    private ProductAttributes attributes;
     private List<CategoryResponse> categories;
     private List<ContentSummary> contents;
+    private List<ModuleSummary> modules;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -41,5 +46,54 @@ public class ProductDetailResponse {
         private String title;
         private int orderIndex;
         private boolean mandatory;
+        private Long moduleId;
+        private Integer durationSeconds;
+        private String videoUrl;
+        private String pdfUrl;
+        private String lessonType; // VIDEO, PDF (for LESSON only); null for ASSESSMENT
+        private AssessmentSummary assessment; // For ASSESSMENT/QUIZ content only
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class AssessmentSummary {
+        private int passPercentage;
+        private List<QuestionSummary> questions;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class QuestionSummary {
+        private Long id;
+        private String questionText;
+        private List<OptionSummary> options; // optionText only, no correct flag for display
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class OptionSummary {
+        private Long id;
+        private String optionText;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ModuleSummary {
+        private Long id;
+        private String title;
+        private int orderIndex;
+        private List<ContentSummary> contents;
     }
 }

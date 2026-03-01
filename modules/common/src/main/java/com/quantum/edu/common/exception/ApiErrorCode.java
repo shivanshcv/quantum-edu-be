@@ -8,6 +8,7 @@ public enum ApiErrorCode {
     INVALID_REQUEST_BODY("QE_VAL_002", "Invalid request body", 400),
 
     // Auth
+    UNAUTHORIZED("QE_AUTH_001", "Invalid or missing authentication token", 401),
     EMAIL_ALREADY_EXISTS("QE_AUTH_002", "An account with this email already exists", 409),
     INVALID_CREDENTIALS("QE_AUTH_003", "Invalid email or password", 401),
     EMAIL_NOT_VERIFIED("QE_AUTH_004", "Please verify your email before logging in", 403),
@@ -17,6 +18,7 @@ public enum ApiErrorCode {
     // User Management
     USER_MANAGEMENT_VALIDATION_FAILED("QE_UM_001", "Validation failed", 400),
     USER_PROFILE_ALREADY_EXISTS("QE_UM_002", "User profile already exists for this user", 409),
+    USER_PROFILE_NOT_FOUND("QE_UM_003", "User profile not found", 404),
 
     // Product Catalogue
     CATEGORY_NOT_FOUND("QE_PC_001", "Category not found", 404),
@@ -29,6 +31,10 @@ public enum ApiErrorCode {
     ASSESSMENT_NOT_FOUND("QE_PC_008", "Assessment not found", 404),
     QUESTION_NOT_FOUND("QE_PC_009", "Question not found", 404),
     PRODUCT_CATALOGUE_VALIDATION_FAILED("QE_PC_010", "Validation failed", 400),
+    MODULE_NOT_FOUND("QE_PC_012", "Product module not found", 404),
+
+    // BFF
+    PRICE_MISMATCH("QE_BFF_001", "Product price does not match. Please refresh and try again.", 400),
 
     // Cart
     CART_EMPTY("QE_CART_004", "Cart is empty", 400),
@@ -38,9 +44,15 @@ public enum ApiErrorCode {
     CART_INVALID_WEBHOOK_SIGNATURE("QE_CART_005", "Invalid webhook signature", 400),
     CART_INVALID_REQUEST("QE_CART_001", "Invalid request", 400),
     CART_SINGLE_ITEM_ONLY("QE_CART_008", "Cart supports only one item. Remove the existing item before adding another.", 400),
+    CART_CHECKOUT_ITEMS_MISMATCH("QE_CART_009", "Checkout items do not match cart. Please refresh and try again.", 400),
 
     // Ownership
-    OWNERSHIP_ALREADY_EXISTS("QE_OWN_001", "User already owns this course", 409);
+    OWNERSHIP_ALREADY_EXISTS("QE_OWN_001", "User already owns this course", 409),
+
+    // LMS
+    LMS_COURSE_ACCESS_DENIED("QE_LMS_001", "Course access denied", 403),
+    LMS_CONTENT_NOT_FOUND("QE_LMS_002", "Lesson not found", 404),
+    LMS_QUIZ_NOT_PASSED("QE_LMS_003", "You must pass the quiz before completing this lesson", 400);
 
     private final String code;
     private final String message;

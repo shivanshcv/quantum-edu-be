@@ -41,6 +41,14 @@
             <artifactId>cart</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.quantum.edu</groupId>
+            <artifactId>lms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.quantum.edu</groupId>
+            <artifactId>bff</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>

@@ -5,6 +5,7 @@ import com.quantum.edu.common.exception.InternalException;
 import com.quantum.edu.usermgmt.domain.UserProfile;
 import com.quantum.edu.usermgmt.repository.UserProfileRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -31,6 +32,35 @@ public class UserProfileApiImpl implements UserProfileApi {
         validateCreateProfile(userId, firstName);
 
         UserProfile profile = new UserProfile(userId, firstName, lastName, phone);
+        return userProfileRepository.save(profile);
+    }
+
+    @Override
+    @Transactional
+    public UserProfile updateBillingInfo(Long userId, String billingName, String addressLine1,
+                                        String addressLine2, String city, String state,
+                                        String country, String postalCode, String gstNumber) {
+        UserProfile profile = userProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new InternalException(InternalErrorCode.USER_PROFILE_NOT_FOUND));
+
+        if (billingName != null && !billingName.isBlank()) {
+            int spaceIdx = billingName.indexOf(' ');
+            if (spaceIdx > 0) {
+                profile.setFirstName(billingName.substring(0, spaceIdx).trim());
+                profile.setLastName(billingName.substring(spaceIdx + 1).trim());
+            } else {
+                profile.setFirstName(billingName.trim());
+                profile.setLastName(null);
+            }
+        }
+        if (addressLine1 != null) profile.setAddressLine1(addressLine1);
+        if (addressLine2 != null) profile.setAddressLine2(addressLine2);
+        if (city != null) profile.setCity(city);
+        if (state != null) profile.setState(state);
+        if (country != null) profile.setCountry(country);
+        if (postalCode != null) profile.setPostalCode(postalCode);
+        if (gstNumber != null) profile.setGstNumber(gstNumber);
+
         return userProfileRepository.save(profile);
     }
 

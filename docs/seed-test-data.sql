@@ -10,6 +10,7 @@ DELETE FROM assessment_option;
 DELETE FROM assessment_question;
 DELETE FROM assessment;
 DELETE FROM lesson;
+DELETE FROM user_lesson_progress;
 DELETE FROM product_content;
 DELETE FROM product_category;
 DELETE FROM product;
@@ -64,17 +65,17 @@ INSERT INTO product (title, slug, short_description, long_description, price, di
 ('Complete Skincare Masterclass', 'complete-skincare-masterclass',
  'Learn professional skincare techniques from experts.',
  'A comprehensive course covering cleansers, serums, moisturizers, sun protection, and advanced treatments. Perfect for beginners and enthusiasts alike. Includes practical demonstrations and product recommendations.',
- 2999.00, 1999.00, 'https://example.com/thumb1.jpg', 'https://example.com/preview1.mp4', 'BEGINNER', 480, 1),
+ 2999.00, 1999.00, 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/thumbnail.jpg', 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/video.mp4', 'BEGINNER', 480, 1),
 
 ('Quantum Physics Fundamentals', 'quantum-physics-fundamentals',
  'Introduction to quantum mechanics and its applications.',
  'Explore wave-particle duality, Schrödinger equation, quantum entanglement, and applications in technology. Designed for students with basic physics knowledge.',
- 4999.00, NULL, 'https://example.com/thumb2.jpg', NULL, 'INTERMEDIATE', 600, 1),
+ 4999.00, NULL, 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/thumbnail.jpg', NULL, 'INTERMEDIATE', 600, 1),
 
 ('Advanced Makeup Artistry', 'advanced-makeup-artistry',
  'Master professional makeup techniques.',
  'Dive deep into contouring, color theory, bridal makeup, and editorial looks. For makeup artists and enthusiasts ready to level up.',
- 3999.00, 3499.00, NULL, 'https://example.com/preview3.mp4', 'ADVANCED', 360, 0);
+ 3999.00, 3499.00, 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/thumbnail.jpg', 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/video.mp4', 'ADVANCED', 360, 0);
 
 -- ---------------------------------------------------------------------------
 -- 5. product_category (many-to-many)
@@ -98,9 +99,9 @@ INSERT INTO product_content (product_id, content_type, title, order_index, is_ma
 -- 7. lesson
 -- ---------------------------------------------------------------------------
 INSERT INTO lesson (product_content_id, lesson_type, video_url, pdf_url, duration_seconds) VALUES
-(1, 'VIDEO', 'https://example.com/videos/intro-skincare.mp4', NULL, 900),
+(1, 'VIDEO', 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/video.mp4', NULL, 900),
 (2, 'PDF', NULL, 'https://example.com/pdfs/skin-type.pdf', 600),
-(4, 'VIDEO', 'https://example.com/videos/wave-particle.mp4', NULL, 1200);
+(4, 'VIDEO', 'https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev/video.mp4', NULL, 1200);
 
 -- ---------------------------------------------------------------------------
 -- 8. assessment

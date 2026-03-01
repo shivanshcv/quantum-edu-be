@@ -1,5 +1,6 @@
 package com.quantum.edu.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.quantum.edu.auth.domain.AuthUser.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +32,7 @@ public class AuthResponse {
         private String firstName;
         private String lastName;
         private Role role;
-        private boolean isVerified;
+        @JsonProperty("verified")
+        private boolean verified;
     }
 }

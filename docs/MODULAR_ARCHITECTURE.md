@@ -46,6 +46,7 @@ quantum-edu-be/
 │   ├── product-catalogue/           # Product Catalogue (Phase-2)
 │   ├── ownership/                   # Ownership Registry (Phase-2)
 │   ├── cart/                        # Cart (Phase-2)
+│   ├── bff/                         # BFF - Page composition for FE
 │   ├── lms/                         # LMS (Phase-2)
 │   └── common/                      # Shared DTOs, utilities (optional)
 │       ├── pom.xml
@@ -104,7 +105,9 @@ quantum-edu-be/
 | Module | Depends On | Reason |
 |--------|------------|--------|
 | auth | user-management | Create user profile on signup |
-| app | auth, user-management, ... | Wire and run all modules |
+| cart | ownership | Record ownership after payment |
+| bff | product-catalogue | Fetch products, categories, instructors for page composition |
+| app | auth, user-management, product-catalogue, ownership, cart, bff | Wire and run all modules |
 
 ---
 
@@ -139,9 +142,10 @@ mvn -pl modules/auth clean install
 
 | Module | Status | Notes |
 |--------|--------|-------|
-| auth | Skeleton | Ready for Auth API implementation |
-| user-management | Skeleton | Ready for Create Profile API implementation |
-| product-catalogue | Not started | Phase-2 |
-| ownership | Not started | Phase-2 |
-| cart | Not started | Phase-2 |
-| lms | Not started | Phase-2 |
+| auth | Done | Signup, login, email verification, JWT |
+| user-management | Done | User profile creation & retrieval |
+| product-catalogue | Done | Categories, products, content, assessments, featured products, instructors, modules, PDP data |
+| ownership | Done | Course ownership records |
+| cart | Done | Add/remove cart, verify, checkout, Razorpay payment |
+| bff | Done | Home, courses catalog, course detail (PDP) page APIs |
+| lms | Not started | Phase-3 |

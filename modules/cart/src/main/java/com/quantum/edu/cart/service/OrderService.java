@@ -82,7 +82,7 @@ public class OrderService {
         }
 
         if (orders.isEmpty()) {
-            throw new InternalException(InternalErrorCode.CART_EMPTY);
+            throw new InternalException(InternalErrorCode.CART_CHECKOUT_ITEMS_MISMATCH);
         }
 
         long amountPaise = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
@@ -91,7 +91,7 @@ public class OrderService {
         String pgOrderId = razorpayOrder.orderId();
         for (Order order : orders) {
             order.setPaymentGatewayOrderId(pgOrderId);
-            order.setStatus(Order.OrderStatus.PAYMENT_PENDING);
+            order.setStatus(Order.OrderStatus.PENDING);
         }
         orderRepository.saveAll(orders);
 

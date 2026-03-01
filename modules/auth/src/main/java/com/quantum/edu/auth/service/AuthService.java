@@ -9,6 +9,8 @@ import com.quantum.edu.common.exception.InternalErrorCode;
 import com.quantum.edu.common.exception.InternalException;
 import com.quantum.edu.usermgmt.api.UserProfileApi;
 import com.quantum.edu.usermgmt.domain.UserProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     private static final int VERIFICATION_TOKEN_EXPIRY_HOURS = 24;
 
     private final AuthUserRepository authUserRepository;
@@ -41,6 +44,7 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest request) {
         if (authUserRepository.existsByEmail(request.getEmail())) {
+            log.error("Auth signup failed: email already exists, email={}", request.getEmail());
             throw new InternalException(InternalErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
@@ -61,23 +65,39 @@ public class AuthService {
 
         notificationService.sendVerification(request.getEmail(), verificationToken);
 
-        return SignupResponse.builder()
+        String token = jwtService.generateToken(authUser);
+        Instant expiresAt = jwtService.getExpiryInstant(token);
+
+        SignupResponse.UserInfo userInfo = SignupResponse.UserInfo.builder()
                 .userId(authUser.getId())
-                .email(request.getEmail())
-                .message("Registration successful. Please verify your email.")
-                .requiresEmailVerification(true)
+                .email(authUser.getEmail())
+                .firstName(request.getFirstName() != null ? request.getFirstName() : "User")
+                .lastName(request.getLastName() != null ? request.getLastName() : "")
+                .role(authUser.getRole())
+                .verified(false)
+                .build();
+
+        return SignupResponse.builder()
+                .token(token)
+                .expiresAt(expiresAt)
+                .user(userInfo)
                 .build();
     }
 
     public AuthResponse login(LoginRequest request) {
         AuthUser user = authUserRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InternalException(InternalErrorCode.INVALID_CREDENTIALS));
+                .orElseThrow(() -> {
+                    log.error("Auth login failed: user not found, email={}", request.getEmail());
+                    return new InternalException(InternalErrorCode.INVALID_CREDENTIALS);
+                });
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            log.error("Auth login failed: invalid password, email={}", request.getEmail());
             throw new InternalException(InternalErrorCode.INVALID_CREDENTIALS);
         }
 
         if (!user.isVerified()) {
+            log.error("Auth login failed: email not verified, email={}, userId={}", request.getEmail(), user.getId());
             throw new InternalException(InternalErrorCode.EMAIL_NOT_VERIFIED);
         }
 
@@ -96,7 +116,7 @@ public class AuthService {
                 .firstName(profile.getFirstName())
                 .lastName(profile.getLastName() != null ? profile.getLastName() : "")
                 .role(user.getRole())
-                .isVerified(user.isVerified())
+                .verified(user.isVerified())
                 .build();
 
         return AuthResponse.builder()
@@ -109,13 +129,18 @@ public class AuthService {
     @Transactional
     public VerifyEmailResponse verifyEmail(String token) {
         if (token == null || token.isBlank()) {
+            log.error("Auth verify-email failed: token is null or blank");
             throw new InternalException(InternalErrorCode.INVALID_VERIFICATION_TOKEN);
         }
 
         AuthUser user = authUserRepository.findByEmailVerificationToken(token)
-                .orElseThrow(() -> new InternalException(InternalErrorCode.VERIFICATION_TOKEN_EXPIRED));
+                .orElseThrow(() -> {
+                    log.error("Auth verify-email failed: token not found or invalid, tokenLength={}", token.length());
+                    return new InternalException(InternalErrorCode.VERIFICATION_TOKEN_EXPIRED);
+                });
 
         if (user.getEmailVerificationExpiry() != null && user.getEmailVerificationExpiry().isBefore(Instant.now())) {
+            log.error("Auth verify-email failed: token expired, userId={}, email={}", user.getId(), user.getEmail());
             throw new InternalException(InternalErrorCode.VERIFICATION_TOKEN_EXPIRED);
         }
 
@@ -123,7 +148,23 @@ public class AuthService {
         user.clearEmailVerification();
         authUserRepository.save(user);
 
+        String jwtToken = jwtService.generateToken(user);
+        Instant expiresAt = jwtService.getExpiryInstant(jwtToken);
+
+        UserProfile profile = userProfileApi.getProfile(user.getId()).orElse(null);
+        AuthResponse.UserInfo userInfo = AuthResponse.UserInfo.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .firstName(profile != null ? profile.getFirstName() : "")
+                .lastName(profile != null && profile.getLastName() != null ? profile.getLastName() : "")
+                .role(user.getRole())
+                .verified(true)
+                .build();
+
         return VerifyEmailResponse.builder()
+                .token(jwtToken)
+                .expiresAt(expiresAt)
+                .user(userInfo)
                 .message("Email verified successfully")
                 .userId(user.getId())
                 .build();
@@ -137,8 +178,14 @@ public class AuthService {
                 user.setEmailVerification(token, expiry);
                 authUserRepository.save(user);
                 notificationService.sendVerification(user.getEmail(), token);
+                log.info("Auth resend-verification: verification email sent, email={}, userId={}", email, user.getId());
+            } else {
+                log.info("Auth resend-verification: user already verified, email={}, userId={}", email, user.getId());
             }
         });
+        if (!authUserRepository.existsByEmail(email)) {
+            log.info("Auth resend-verification: no user found for email={}", email);
+        }
 
         return ResendVerificationResponse.builder()
                 .message("If an account exists with this email, a verification link has been sent.")

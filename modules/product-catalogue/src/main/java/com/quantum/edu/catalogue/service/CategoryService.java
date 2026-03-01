@@ -74,6 +74,13 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
+    public List<CategoryResponse> listActive() {
+        return categoryRepository.findByActiveTrue().stream()
+                .map(c -> toResponse(c, false))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getTree(boolean activeOnly) {
         List<Category> roots = activeOnly
                 ? categoryRepository.findByParentIsNullAndActiveTrueOrderByNameAsc()

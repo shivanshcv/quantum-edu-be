@@ -12,6 +12,7 @@ public enum InternalErrorCode {
     // User Management
     USER_MANAGEMENT_VALIDATION_FAILED("QE_INT_006", "Validation failed", ApiErrorCode.USER_MANAGEMENT_VALIDATION_FAILED),
     USER_PROFILE_ALREADY_EXISTS("QE_INT_007", "User profile already exists", ApiErrorCode.USER_PROFILE_ALREADY_EXISTS),
+    USER_PROFILE_NOT_FOUND("QE_INT_028", "User profile not found", ApiErrorCode.USER_PROFILE_NOT_FOUND),
 
     // Product Catalogue
     CATEGORY_NOT_FOUND("QE_INT_008", "Category not found", ApiErrorCode.CATEGORY_NOT_FOUND),
@@ -24,6 +25,10 @@ public enum InternalErrorCode {
     ASSESSMENT_NOT_FOUND("QE_INT_015", "Assessment not found", ApiErrorCode.ASSESSMENT_NOT_FOUND),
     QUESTION_NOT_FOUND("QE_INT_016", "Question not found", ApiErrorCode.QUESTION_NOT_FOUND),
     PRODUCT_CATALOGUE_VALIDATION_FAILED("QE_INT_017", "Validation failed", ApiErrorCode.PRODUCT_CATALOGUE_VALIDATION_FAILED),
+    MODULE_NOT_FOUND("QE_INT_027", "Product module not found", ApiErrorCode.MODULE_NOT_FOUND),
+
+    // BFF
+    PRICE_MISMATCH("QE_INT_029", "Product price does not match. Please refresh and try again.", ApiErrorCode.PRICE_MISMATCH),
 
     // Cart
     CART_EMPTY("QE_INT_018", "Cart is empty", ApiErrorCode.CART_EMPTY),
@@ -33,6 +38,7 @@ public enum InternalErrorCode {
     CART_INVALID_WEBHOOK_SIGNATURE("QE_INT_022", "Invalid webhook signature", ApiErrorCode.CART_INVALID_WEBHOOK_SIGNATURE),
     CART_INVALID_REQUEST("QE_INT_023", "Invalid request", ApiErrorCode.CART_INVALID_REQUEST),
     CART_SINGLE_ITEM_ONLY("QE_INT_025", "Cart supports only one item. Remove the existing item before adding another.", ApiErrorCode.CART_SINGLE_ITEM_ONLY),
+    CART_CHECKOUT_ITEMS_MISMATCH("QE_INT_030", "Checkout items do not match cart. Please refresh and try again.", ApiErrorCode.CART_CHECKOUT_ITEMS_MISMATCH),
 
     // Ownership
     OWNERSHIP_ALREADY_EXISTS("QE_INT_024", "User already owns this course", ApiErrorCode.OWNERSHIP_ALREADY_EXISTS);

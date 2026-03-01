@@ -1,6 +1,8 @@
 package com.quantum.edu.catalogue.controller;
 
+import com.quantum.edu.catalogue.domain.ProductAttributes;
 import com.quantum.edu.catalogue.dto.*;
+import com.quantum.edu.catalogue.service.ProductPdpService;
 import com.quantum.edu.catalogue.service.ProductService;
 import com.quantum.edu.common.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class AdminProductController {
 
     private final ProductService productService;
+    private final ProductPdpService pdpService;
 
-    public AdminProductController(ProductService productService) {
+    public AdminProductController(ProductService productService, ProductPdpService pdpService) {
         this.productService = productService;
+        this.pdpService = pdpService;
     }
 
     @PostMapping("/createProduct")
@@ -50,6 +54,14 @@ public class AdminProductController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @PatchMapping("/setFeatured/{id}")
+    public ResponseEntity<ApiResponse<ProductListResponse>> setFeatured(
+            @PathVariable Long id,
+            @Valid @RequestBody FeaturedRequest request) {
+        ProductListResponse response = productService.setFeatured(id, request.getFeatured());
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     @GetMapping("/getProducts")
     public ResponseEntity<ApiResponse<Page<ProductListResponse>>> getProducts(
             @PageableDefault(size = 20) Pageable pageable) {
@@ -59,5 +71,13 @@ public class AdminProductController {
     @GetMapping("/getProduct/{id}")
     public ResponseEntity<ApiResponse<ProductDetailResponse>> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(productService.getById(id)));
+    }
+
+    @PutMapping("/setAttributes/{id}")
+    public ResponseEntity<ApiResponse<Void>> setAttributes(
+            @PathVariable Long id,
+            @RequestBody ProductAttributes attributes) {
+        pdpService.setAttributes(id, attributes);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

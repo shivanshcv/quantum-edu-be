@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OwnershipApiImpl implements OwnershipApi {
@@ -21,6 +23,13 @@ public class OwnershipApiImpl implements OwnershipApi {
     @Override
     public boolean ownsCourse(Long userId, Long productId) {
         return repository.existsByUserIdAndCourseId(userId, productId);
+    }
+
+    @Override
+    public List<Long> getEnrolledCourseIds(Long userId) {
+        return repository.findByUserIdOrderByPurchasedAtDesc(userId).stream()
+                .map(CourseOwnership::getCourseId)
+                .collect(Collectors.toList());
     }
 
     @Override
