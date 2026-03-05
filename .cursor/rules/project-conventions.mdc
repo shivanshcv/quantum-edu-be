@@ -1,0 +1,121 @@
+---
+description: Core project context, architecture, conventions, and coding standards for the Quantum Education backend
+alwaysApply: true
+---
+
+# Quantum Education Backend — Project Conventions
+
+## What This Project Is
+
+Quantum Education is an **e-commerce platform + LMS (Learning Management System) for beauty
+courses** (makeup, skincare, hairstyling, etc.). A single backend serves both web and future
+mobile apps. Users can browse and purchase courses, and then consume the course content through
+the built-in LMS.
+
+### Key Domain Concepts
+
+- **Users** sign up, verify email, log in. Roles: `USER` (customer) and `ADMIN` (course creator / platform admin).
+- **Products** are purchasable course listings with pricing, descriptions, images.
+- **Ownership** tracks which users own which products (post-purchase).
+- **Cart** handles add-to-cart, checkout, and payment integration.
+- **LMS** delivers course content (videos, materials, progress tracking) to users who own the course.
+
+## Tech Stack
+
+- Java 21, Spring Boot 3.3.5, Maven, MySQL 8, Lombok 1.18.38
+- JWT (HS256) via jjwt, Argon2 password hashing, Spring Mail
+
+## Architecture — Modular Monolith
+
+```
+quantum-edu-be/
+├── pom.xml              # Parent POM
+├── modules/
+│   ├── common/          # Shared DTOs, response format, base exceptions
+│   ├── auth/            # Authentication & authorization
+│   ├── user-management/ # User profile CRUD
+│   ├── product-catalogue/ (planned) # Course listings, pricing, images
+│   ├── ownership/         (planned) # Purchase records, entitlements
+│   ├── cart/              (planned) # Shopping cart, checkout, payment
+│   └── lms/               (planned) # Course content delivery, progress
+└── app/                 # Runnable Spring Boot application
+```
+
+### Module Status & Roadmap
+
+| Module | Status | Purpose |
+|--------|--------|---------|
+| common | Done | `ApiResponse`, `ApiError`, `ErrorDetail`, `BaseApiException` |
+| auth | Done | Signup, login, email verification, JWT, Argon2 |
+| user-management | Done | User profile creation & retrieval (internal API) |
+| product-catalogue | Planned | CRUD for courses/products, categories, images, pricing |
+| ownership | Planned | Records of which user owns which product after purchase |
+| cart | Planned | Add-to-cart, quantity management, checkout flow, payment |
+| lms | Planned | Course content (modules/lessons/videos), progress tracking |
+
+### Inter-Module Dependency Map
+
+```
+auth ──depends-on──▶ user-management (creates profile on signup)
+cart ──depends-on──▶ ownership (record purchase after payment)
+bff  ──depends-on──▶ product-catalogue (fetch featured products for page composition)
+lms  ──will-depend──▶ ownership (check user owns course before granting access)
+lms  ──will-depend──▶ product-catalogue (fetch course structure/content)
+app  ──depends-on──▶ all modules (wires everything into one Spring Boot app)
+```
+
+### Module Rules
+
+- Each module owns its own package: `com.quantum.edu.<module>` (e.g. `auth`, `usermgmt`).
+- **Never** import another module's internal classes (repositories, domain entities, internal services).
+- Cross-module communication uses the target module's **public API interface** (e.g. `UserProfileApi`).
+- Only the `app` module has `@SpringBootApplication` and `spring-boot-maven-plugin`.
+- New modules: create under `modules/`, add to parent POM `<modules>`, add to `app/pom.xml` dependencies.
+
+### API Versioning
+
+All REST endpoints are prefixed: `/api/v1/<module>/...`
+
+## Standard API Response Format
+
+Every controller returns `ResponseEntity<ApiResponse<T>>`.
+
+```java
+// Success
+ApiResponse.success(responseDto)
+
+// Error (handled via GlobalExceptionHandler)
+ApiResponse.error(ApiError.of("QE_AUTH_001", "Validation failed", details))
+```
+
+- Success: `{ "success": true, "response": { ... } }`
+- Error: `{ "success": false, "error": { "code": "QE_xxx", "message": "...", "details": [...] } }`
+- `details` is an optional list of `ErrorDetail(field, message)` for validation errors.
+
+## Error Handling
+
+- Module-specific exceptions extend `BaseApiException` (in common module).
+- Use static factory methods on exception classes: `AuthException.emailAlreadyExists()`.
+- Error codes are prefixed per module: `QE_AUTH_xxx`, `QE_UM_xxx`, `QE_PC_xxx`, `QE_OWN_xxx`, `QE_CART_xxx`, `QE_LMS_xxx`, `QE_001` (global).
+- `GlobalExceptionHandler` (in `app`) catches `BaseApiException`, `MethodArgumentNotValidException`, and generic `Exception`.
+- Never throw raw `RuntimeException` from service code — always use a typed exception.
+
+## Security Model (Current & Planned)
+
+- **Auth**: JWT tokens issued on login, validated via filter on protected endpoints.
+- **Public endpoints**: signup, login, verify-email, resend-verification, product browsing.
+- **Protected endpoints**: profile updates, cart operations, purchases, LMS content access.
+- **Admin endpoints**: product CRUD, user management admin views (role-gated).
+
+## Database Conventions
+
+- MySQL 8 with InnoDB.
+- Table names: `snake_case` matching the entity concept (e.g. `auth_user`, `user_profile`).
+- All PKs are `Long` with `@GeneratedValue(strategy = GenerationType.IDENTITY)` (MySQL auto-increment).
+- All entities have `created_at` and `updated_at` (`Instant`, not null).
+- Column names: `snake_case`. JPA `@Column(name = "...")` explicit on every field.
+- Indexes: declared via `@Table(indexes = ...)` or `@Index`.
+
+## Documentation
+
+API specs live in `docs/`: `AUTH_API_SPEC.md`, `USER_MANAGEMENT_API_SPEC.md`, `API_RESPONSE_FORMAT.md`, `MODULAR_ARCHITECTURE.md`. When adding a new module with REST APIs, create a corresponding `docs/<MODULE>_API_SPEC.md`.

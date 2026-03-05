@@ -1,0 +1,34 @@
+---
+description: Maven structure and dependency management rules
+globs: "**/pom.xml"
+alwaysApply: false
+---
+
+# Maven & Dependencies
+
+## Parent POM (`pom.xml` at root)
+
+- Inherits from `spring-boot-starter-parent` 3.3.5.
+- Declares `<modules>` for all child modules.
+- All shared dependency versions go in `<dependencyManagement>`.
+- `maven-compiler-plugin` configured in `<pluginManagement>` with Lombok annotation processor.
+
+## Module POMs
+
+- Parent: `quantum-edu-be-parent`.
+- Declare only the dependencies that module actually uses — no version tags (managed by parent).
+- Lombok: add `<dependency>` with `<scope>provided</scope>` (version from parent BOM).
+- `spring-boot-maven-plugin` is ONLY in the `app` module POM — never in library modules.
+
+## Adding a New Module
+
+1. Create `modules/<name>/pom.xml` with parent reference.
+2. Add `<module>modules/<name></module>` to the parent POM.
+3. Add the module artifact to parent `<dependencyManagement>`.
+4. Add it as a dependency in `app/pom.xml`.
+
+## Adding a New Dependency
+
+- If it may be reused across modules, add it to parent `<dependencyManagement>` with a version.
+- In the module POM, declare just `groupId + artifactId` (no version).
+- Always check if Spring Boot BOM already manages the version before adding one.

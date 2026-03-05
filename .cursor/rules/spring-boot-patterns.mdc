@@ -1,0 +1,86 @@
+---
+description: Spring Boot patterns for controllers, services, repositories, and configuration
+globs: "**/*.java"
+alwaysApply: false
+---
+
+# Spring Boot Patterns
+
+## Controller Layer
+
+- Annotate with `@RestController` and `@RequestMapping("/api/v1/<module>")`.
+- Controllers are thin — delegate all logic to the service layer.
+- Use `@Valid @RequestBody` for request validation.
+- Always return `ResponseEntity<ApiResponse<T>>`. Use `ApiResponse.success(dto)`.
+- Use proper HTTP status codes: 201 for creation, 200 for reads/updates, 204 for deletes.
+
+```java
+@PostMapping("/signup")
+public ResponseEntity<ApiResponse<SignupResponse>> signup(@Valid @RequestBody SignupRequest request) {
+    SignupResponse response = authService.signup(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+}
+```
+
+## Service Layer
+
+- Annotate with `@Service`.
+- Contains all business logic and validation.
+- Use `@Transactional` on methods that perform multiple writes.
+- Use `@Transactional(readOnly = true)` on read-only methods that run multiple queries.
+- Throw module-specific exceptions (extending `BaseApiException`) — never catch and swallow.
+- Services call repositories directly, and cross-module public API interfaces for other modules.
+
+## Repository Layer
+
+- Extend `JpaRepository<Entity, Long>`.
+- Use Spring Data derived query methods where possible (`findByEmail`, `existsByEmail`).
+- Custom queries via `@Query` only when derived methods are insufficient.
+- Never expose repositories outside their own module.
+
+## Entity Design
+
+- All PKs are `Long` with `@GeneratedValue(strategy = GenerationType.IDENTITY)` (MySQL auto-increment).
+- Do not set the `id` field in the constructor — let JPA/MySQL assign it on insert.
+- Always include `createdAt` and `updatedAt` fields (`Instant`).
+- Mark IDs and `createdAt` as `updatable = false`.
+- Use `@Enumerated(EnumType.STRING)` for enum columns (never ordinal).
+- Table and column names explicitly declared: `@Table(name = "...")`, `@Column(name = "...")`.
+- Protected no-arg constructor for JPA; public constructor for application use.
+
+## Configuration
+
+- Environment-specific properties via Spring profiles: `dev`, `staging`, `prod`.
+- Property files: `application.properties` (base) + `application-{profile}.properties`.
+- Custom config classes annotated with `@ConfigurationProperties` and bound to prefix.
+- Secrets (JWT key, DB password, SMTP password) are placeholders in staging/prod files.
+- Dev profile: MySQL on `localhost:3306`, database `quantum_education`, user `root`/`root`.
+
+## Validation
+
+- Use Jakarta Bean Validation annotations on DTO fields (`@NotBlank`, `@Email`, `@Size`).
+- For programmatic validation in services, inject `jakarta.validation.Validator` and collect
+  violations into `ErrorDetail` list, then throw the module exception.
+
+## Exception Hierarchy
+
+```
+BaseApiException (abstract, in common)
+ ├── AuthException (in auth module)
+ │    └── static factories: validationFailed(), emailAlreadyExists(), invalidCredentials() ...
+ ├── UserManagement*Exception (in user-management module)
+ └── <ModuleName>Exception (pattern for future modules)
+```
+
+- Each module defines its own exception class with static factory methods.
+- `GlobalExceptionHandler` in `app` handles all `BaseApiException` subtypes uniformly.
+- When adding a new module, create `<ModuleName>Exception extends BaseApiException` with
+  module-specific error codes and static factories.
+
+## Inter-Module Communication
+
+- Define a public API interface in the provider module (e.g. `UserProfileApi`).
+- Implement with `@Service` in the same module.
+- Consumer module depends on provider's Maven artifact and calls the interface.
+- Never access another module's `@Repository` or `@Entity` directly.
+- When modules are eventually extracted to microservices, these interfaces become REST clients.

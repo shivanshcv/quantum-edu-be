@@ -1,0 +1,116 @@
+---
+description: Java coding standards and best practices for all Java source files
+globs: "**/*.java"
+alwaysApply: false
+---
+
+# Java Coding Standards
+
+## Lombok Usage
+
+Use Lombok wherever possible to eliminate boilerplate. Lombok is configured in the parent POM
+via `maven-compiler-plugin` annotation processor paths (version 1.18.38).
+
+### DTOs / Request / Response classes
+
+Always annotate with: `@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder`
+
+```java
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SignupResponse {
+    private Long userId;
+    private String email;
+}
+```
+
+Always build DTOs using the builder pattern:
+
+```java
+// GOOD
+SignupResponse.builder()
+    .userId(userId)
+    .email(email)
+    .build();
+
+// BAD — never use constructor directly for DTOs
+new SignupResponse(userId, email);
+```
+
+### Entities (JPA)
+
+Do **not** use `@Builder` or `@AllArgsConstructor` on JPA entities. Entities manage their own
+state with explicit constructors, targeted setters, and domain methods. Use `@Getter` only for
+read accessors; write only the setters that make domain sense (e.g. `setVerified`, not a blanket
+`@Setter`). JPA requires a protected no-arg constructor.
+
+```java
+@Entity
+public class AuthUser {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    protected AuthUser() {}               // JPA
+    public AuthUser(String email, String passwordHash, Role role) { ... }
+    // explicit getters, targeted setters, domain methods
+}
+```
+
+### Services / Controllers / Config
+
+Use constructor injection. Let Spring autowire via the single constructor — no `@Autowired` needed.
+
+```java
+@Service
+public class AuthService {
+    private final AuthUserRepository repo;
+    public AuthService(AuthUserRepository repo) { this.repo = repo; }
+}
+```
+
+## Dependency Injection
+
+- Prefer **constructor injection** over field injection (`@Autowired` on fields).
+- All injected fields must be `private final`.
+- If a class has a single constructor, omit `@Autowired`.
+
+## Naming Conventions
+
+| Element | Convention | Example |
+|---------|-----------|---------|
+| Package | lowercase, module-scoped | `com.quantum.edu.auth.service` |
+| Class | PascalCase | `AuthService`, `SignupRequest` |
+| Method | camelCase, verb-first | `createProfile`, `findByEmail` |
+| Constant | UPPER_SNAKE | `VERIFICATION_TOKEN_EXPIRY_HOURS` |
+| DTO | Suffixed with Request/Response | `LoginRequest`, `AuthResponse` |
+| Repository | Suffixed with Repository | `AuthUserRepository` |
+| API interface | Suffixed with Api | `UserProfileApi` |
+
+## Null Handling
+
+- Never return `null` from service methods for collections — return empty collections.
+- Use `Optional<T>` for single-entity lookups that may not exist.
+- Use `@NotBlank`, `@NotNull`, `@Size` etc. on DTOs for validation — not manual null-checks in controllers.
+
+## Immutability & Defensive Coding
+
+- DTO fields: `private` with Lombok-generated accessors.
+- Entity IDs and timestamps: mark `updatable = false` in `@Column`.
+- Use `Instant` (not `Date` or `LocalDateTime`) for all timestamp fields.
+- All entity PKs are `Long` with `@GeneratedValue(strategy = GenerationType.IDENTITY)` (auto-increment).
+
+## Method & Class Size
+
+- Keep methods under ~30 lines. Extract private helpers for readability.
+- Keep classes focused on a single responsibility.
+- One public class per file.
+
+## Comments
+
+- Do not write comments that repeat what the code says.
+- Comments are only for non-obvious intent, constraints, or trade-offs.
+- Javadoc on public API interfaces that other modules consume (e.g. `UserProfileApi`).
