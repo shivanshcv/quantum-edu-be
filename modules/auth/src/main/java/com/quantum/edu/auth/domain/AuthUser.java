@@ -101,6 +101,10 @@ public class AuthUser {
         this.lastLoginAt = Instant.now();
     }
 
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
     public enum Role {
         USER, ADMIN
     }

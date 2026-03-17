@@ -55,4 +55,13 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    @PostMapping("/changePassword")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @RequestAttribute("userId") Long userId,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        log.info("Auth change-password request for userId={}", userId);
+        authService.changePassword(userId, request.getCurrentPassword(), request.getNewPassword());
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
 }

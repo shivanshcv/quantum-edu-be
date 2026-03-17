@@ -10,13 +10,14 @@
 
 1. [Generic Request & Response Format](#1-generic-request--response-format)
 2. [Error Response Format](#2-error-response-format)
-3. [Global Error Codes](#3-global-error-codes)
-4. [Auth Module APIs](#4-auth-module-apis)
-5. [Product Catalogue Module APIs](#5-product-catalogue-module-apis)
-6. [Cart Module APIs](#6-cart-module-apis)
-7. [Ownership Module APIs](#7-ownership-module-apis)
-8. [BFF Page APIs](#8-bff-page-apis)
-9. [Complete Error Codes Reference](#9-complete-error-codes-reference)
+3. [Currency](#3-currency)
+4. [Global Error Codes](#4-global-error-codes)
+5. [Auth Module APIs](#5-auth-module-apis)
+6. [Product Catalogue Module APIs](#6-product-catalogue-module-apis)
+7. [Cart Module APIs](#7-cart-module-apis)
+8. [Ownership Module APIs](#8-ownership-module-apis)
+9. [BFF Page APIs](#9-bff-page-apis)
+10. [Complete Error Codes Reference](#10-complete-error-codes-reference)
 
 ---
 
@@ -83,7 +84,25 @@ All error responses follow this structure:
 
 ---
 
-## 3. Global Error Codes
+## 3. Currency
+
+All monetary amounts across the application use a single configured currency (default: **INR**).
+
+**Configuration:** `app.currency.code` (e.g. INR), `app.currency.symbol` (e.g. ₹). Override via env: `APP_CURRENCY`, `APP_CURRENCY_SYMBOL`.
+
+| Context | Format | Example |
+| ------- | ------ | ------- |
+| **Display (Home, Courses, PDP, Cart)** | Symbol + amount with grouping | `₹1,999` |
+| **Verify cart (subtotal, taxes, total)** | Code + amount | `INR 799`, `INR 144`, `INR 943` |
+| **Checkout response** | `currency` field + `amount` (paise for Razorpay) | `currency: "INR"`, `amount: 235882` |
+
+**Requests:** Amount fields (`price`, `finalPrice`, `gstAmount`, etc.) are plain numbers. No currency field in requests; backend assumes configured currency.
+
+**Responses:** Verify and Checkout include `currency` when payment is required. All formatted price strings use the configured symbol/code.
+
+---
+
+## 4. Global Error Codes
 
 These can apply to any API:
 
@@ -97,7 +116,7 @@ These can apply to any API:
 
 ---
 
-## 4. Auth Module APIs
+## 5. Auth Module APIs
 
 **Base Path:** `/api/v1/auth`
 
@@ -331,7 +350,59 @@ curl -s -X POST http://localhost:8080/api/v1/auth/resend-verification \
 
 ---
 
-## 5. Product Catalogue Module APIs
+### 4.5 Change Password
+
+**Endpoint:** `POST /api/v1/auth/changePassword`  
+**Auth Required:** Yes (JWT Bearer token)
+
+Updates the authenticated user's password. Requires current password for verification.
+
+#### Request
+
+| Field           | Type   | Required | Validation   | Description              |
+| --------------- | ------ | -------- | ------------ | ------------------------ |
+| currentPassword | string | Yes      | -            | Current password         |
+| newPassword     | string | Yes      | Min 8 chars  | New password             |
+
+#### Request Body
+
+```json
+{
+  "currentPassword": "OldP@ss123",
+  "newPassword": "NewSecureP@ss456"
+}
+```
+
+#### Success Response (200 OK)
+
+```json
+{
+  "success": true,
+  "response": null
+}
+```
+
+#### Sample cURL
+
+```bash
+curl -s -X POST http://localhost:8080/api/v1/auth/changePassword \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"currentPassword": "OldP@ss123", "newPassword": "NewSecureP@ss456"}'
+```
+
+#### Error Codes
+
+| Code       | HTTP | Message                   | Condition                    |
+| ---------- | ---- | ------------------------- | ---------------------------- |
+| QE_VAL_001 | 400  | Validation failed         | Invalid/missing fields       |
+| QE_AUTH_003 | 401 | Invalid email or password | Wrong current password      |
+| QE_001     | 500  | Internal server error     | Unexpected error             |
+
+
+---
+
+## 6. Product Catalogue Module APIs
 
 ### 5.1 Admin Category APIs
 
@@ -927,9 +998,10 @@ curl -s http://localhost:8080/api/v1/admin/catalogue/getProduct/1
 | title           | string  | Yes      | Max 255            | Content title                       |
 | orderIndex      | integer | Yes      | >= 0               | Order in spine                      |
 | mandatory       | boolean | No       | -                  | Default true                        |
-| lessonType      | enum    | No*      | VIDEO, PDF         | *Required if contentType=LESSON     |
-| videoUrl        | string  | No       | Max 500            | Video URL (for LESSON)              |
-| pdfUrl          | string  | No       | Max 500            | PDF URL (for LESSON)                |
+| lessonType      | enum    | No*      | VIDEO, PDF, PPT    | *Required if contentType=LESSON     |
+| videoUrl        | string  | No       | Max 500            | Video URL (for VIDEO type)          |
+| pdfUrl          | string  | No       | Max 500            | PDF URL (for PDF type)              |
+| pptUrl          | string  | No       | Max 500            | PPT URL (for PPT type; slideshow)   |
 | durationSeconds | integer | No       | >= 0               | Duration (for LESSON)               |
 | passPercentage  | integer | No       | >= 0               | Pass % (for ASSESSMENT, default 70) |
 
@@ -950,6 +1022,7 @@ curl -s http://localhost:8080/api/v1/admin/catalogue/getProduct/1
       "lessonType": "VIDEO",
       "videoUrl": "https://example.com/videos/intro.mp4",
       "pdfUrl": null,
+      "pptUrl": null,
       "durationSeconds": 1200
     },
     "assessment": null
@@ -969,6 +1042,8 @@ curl -s -X POST http://localhost:8080/api/v1/admin/catalogue/addProductContent/1
     "mandatory": true,
     "lessonType": "VIDEO",
     "videoUrl": "https://example.com/videos/intro.mp4",
+    "pdfUrl": null,
+    "pptUrl": null,
     "durationSeconds": 1200
   }'
 ```
@@ -992,7 +1067,7 @@ curl -s -X POST http://localhost:8080/api/v1/admin/catalogue/addProductContent/1
 
 #### Request
 
-Same fields as Add Content; all optional (title, mandatory, lessonType, videoUrl, pdfUrl, durationSeconds, passPercentage).
+Same fields as Add Content; all optional (title, mandatory, lessonType, videoUrl, pdfUrl, pptUrl, durationSeconds, passPercentage).
 
 #### Success Response (200 OK)
 
@@ -1548,7 +1623,7 @@ curl -s http://localhost:8080/health
 
 ---
 
-## 6. Cart Module APIs
+## 7. Cart Module APIs
 
 **Base Path:** `/api/v1/cart`  
 **Auth Required:** Yes (JWT Bearer token). All endpoints except webhook require `Authorization: Bearer <token>`.
@@ -1903,7 +1978,7 @@ curl -s -X POST http://localhost:8080/api/v1/cart/webhook/razorpay \
 
 ---
 
-## 7. Ownership Module APIs
+## 8. Ownership Module APIs
 
 **Base Path:** `/api/v1/ownership`  
 **Auth Required:** Yes (JWT Bearer token)
@@ -1947,7 +2022,102 @@ or
 
 ---
 
-## 8. BFF Page APIs
+## 8.5 User Management Module APIs
+
+**Base Path:** `/api/v1/usermgmt`  
+**Auth Required:** Yes (JWT Bearer token)
+
+---
+
+### 8.5.1 Update Profile
+
+**Endpoint:** `PATCH /api/v1/usermgmt/updateProfile`
+
+Updates the user's profile name and phone. Does not change billing info.
+
+#### Request
+
+| Field     | Type   | Required | Validation | Description  |
+| --------- | ------ | -------- | ---------- | ------------ |
+| firstName | string | Yes      | Max 100    | First name   |
+| lastName  | string | No       | Max 100    | Last name    |
+| phone     | string | No       | Max 20     | Phone number |
+
+#### Request Body
+
+```json
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "phone": "+919876543210"
+}
+```
+
+#### Success Response (200 OK)
+
+Returns the updated UserProfile entity.
+
+#### Sample cURL
+
+```bash
+curl -s -X PATCH http://localhost:8080/api/v1/usermgmt/updateProfile \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"firstName": "Jane", "lastName": "Doe", "phone": "+919876543210"}'
+```
+
+---
+
+### 8.5.2 Update Billing Info
+
+**Endpoint:** `PATCH /api/v1/usermgmt/updateBillingInfo`
+
+Updates the user's billing details. Billing name is stored separately from profile name.
+
+#### Request
+
+| Field               | Type   | Required | Validation | Description      |
+| ------------------- | ------ | -------- | ---------- | ---------------- |
+| billingName        | string | Yes      | Max 255    | Billing name     |
+| billingAddressLine1| string | Yes      | Max 255    | Address line 1   |
+| billingAddressLine2| string | No       | Max 255    | Address line 2   |
+| billingCity        | string | Yes      | Max 100    | City             |
+| billingState       | string | Yes      | Max 100    | State            |
+| billingCountry     | string | Yes      | Max 100    | Country          |
+| billingPostalCode  | string | Yes      | Max 20     | Postal code      |
+| billingGstNumber   | string | No       | Max 30     | GST number       |
+
+#### Request Body
+
+```json
+{
+  "billingName": "Jane Doe",
+  "billingAddressLine1": "123 Main Street",
+  "billingAddressLine2": "Apt 4B",
+  "billingCity": "Mumbai",
+  "billingState": "Maharashtra",
+  "billingCountry": "India",
+  "billingPostalCode": "400001",
+  "billingGstNumber": "22AAAAA0000A1Z5"
+}
+```
+
+#### Success Response (200 OK)
+
+Returns the updated UserProfile entity.
+
+#### Sample cURL
+
+```bash
+curl -s -X PATCH http://localhost:8080/api/v1/usermgmt/updateBillingInfo \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"billingName": "Jane Doe", "billingAddressLine1": "123 Main St", ...}'
+```
+
+---
+
+## 9. BFF Page APIs
 
 **Base Path:** `/pages`  
 **Auth Required:** Varies by endpoint. Home, courses, and course detail are public. Cart page and verify cart require JWT.
@@ -2655,7 +2825,86 @@ curl -s -X POST http://localhost:8080/pages/verify-cart \
 
 ---
 
-### 8.6 BFF Checkout
+### 8.6 Settings Page
+
+**Endpoint:** `GET /pages/settings`  
+**Auth Required:** Yes (JWT Bearer token)
+
+Returns the settings page structure with profile, security, and billing sections. Email is read-only. Profile name (firstName + lastName) and billing name are separate.
+
+#### Success Response (200 OK)
+
+```json
+{
+  "success": true,
+  "response": {
+    "main": {
+      "type": "SETTINGS",
+      "components": [
+        {
+          "id": "settings-form",
+          "type": "SETTINGS_PAGE",
+          "config": { "theme": "light" },
+          "details": {
+            "profileSection": {
+              "title": "Profile",
+              "fields": [
+                { "id": "name", "label": "Full name", "type": "text", "placeholder": "Jane Doe", "required": true, "readOnly": false },
+                { "id": "email", "label": "Email", "type": "email", "placeholder": "jane@example.com", "required": true, "readOnly": true }
+              ],
+              "submitLabel": "Save changes"
+            },
+            "securitySection": {
+              "title": "Security",
+              "fields": [
+                { "id": "currentPassword", "label": "Current password", "type": "password", "required": true, "readOnly": false },
+                { "id": "newPassword", "label": "New password", "type": "password", "required": true, "readOnly": false }
+              ],
+              "submitLabel": "Change password"
+            },
+            "billingSection": {
+              "title": "Billing Details",
+              "fields": [
+                { "id": "billingName", "label": "Full name", "type": "text", "required": true, "readOnly": false },
+                { "id": "billingAddressLine1", "label": "Address line 1", "type": "text", "required": true, "readOnly": false },
+                ...
+              ],
+              "submitLabel": "Save changes"
+            },
+            "values": {
+              "name": "Jane Doe",
+              "email": "jane@example.com",
+              "billingName": "Jane Doe",
+              "billingAddressLine1": "123 Main St",
+              "billingAddressLine2": "",
+              "billingCity": "Mumbai",
+              "billingState": "Maharashtra",
+              "billingCountry": "India",
+              "billingPostalCode": "400001",
+              "billingGstNumber": ""
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+- **Profile:** Use `PATCH /api/v1/usermgmt/updateProfile` for name and phone. Email is read-only.
+- **Security:** Use `POST /api/v1/auth/changePassword` for password change.
+- **Billing:** Use `PATCH /api/v1/usermgmt/updateBillingInfo` for billing details.
+
+#### Sample cURL
+
+```bash
+curl -s http://localhost:8080/pages/settings \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+---
+
+### 8.8 BFF Checkout
 
 **Endpoint:** `POST /api/v1/bff/checkout`  
 **Auth Required:** Yes (verified email required)
@@ -2716,7 +2965,7 @@ curl -s -X POST http://localhost:8080/api/v1/bff/checkout \
 
 ---
 
-### 8.7 LMS Player
+### 8.9 LMS Player
 
 **Base Path:** `/lms`  
 **Auth Required:** Yes
@@ -2756,8 +3005,7 @@ Returns course structure and progress for the LMS player. User must own the cour
             "description": "Understand skin layers, structures, and clinical relevance.",
             "durationMinutes": 14,
             "status": "completed",
-            "videoUrl": "https://example.com/video.mp4",
-            "pdfUrl": null,
+            "url": "https://example.com/video.mp4",
             "moduleType": "LESSON",
             "type": "VIDEO",
             "assessment": null
@@ -2768,8 +3016,7 @@ Returns course structure and progress for the LMS player. User must own the cour
             "description": "Module 1 Quiz",
             "durationMinutes": 5,
             "status": "not_started",
-            "videoUrl": null,
-            "pdfUrl": null,
+            "url": null,
             "moduleType": "QUIZ",
             "type": null,
             "assessment": {
@@ -2798,8 +3045,8 @@ Returns course structure and progress for the LMS player. User must own the cour
 **Lesson status:** `completed`, `in_progress`, `not_started`, `locked`  
 **Module isLocked:** `true` when previous module has incomplete lessons  
 **moduleType:** `LESSON` or `QUIZ` (assessment)  
-**type:** `VIDEO` or `PDF` for lessons; `null` for quiz  
-**videoUrl / pdfUrl:** For VIDEO lessons use `videoUrl`; for PDF lessons use `pdfUrl`. Quiz has both null.  
+**type:** `VIDEO`, `PDF`, or `PPT` for lessons; `null` for quiz
+**url:** Single media URL. Backend populates based on type: video_url for VIDEO, pdf_url for PDF, ppt_url for PPT. FE renders accordingly (video player, PDF viewer, or PPT slideshow). Quiz has `null`.
 **assessment:** For QUIZ lessons only. Contains `passPercentage` and `questions` (each with `id`, `questionText`, `options`). Options have `id` and `optionText` only (no correct answer exposed). FE displays quiz, collects answers, then calls `POST /lms/lessons/{contentId}/validate-quiz` before allowing complete.
 
 **Error Codes**
@@ -2911,7 +3158,7 @@ curl -s -X POST http://localhost:8080/lms/lessons/1/complete \
 
 ---
 
-### 8.8 Admin PDP Data Endpoints
+### 8.10 Admin PDP Data Endpoints
 
 These admin endpoints manage the PDP-specific data for products. Highlights, learning outcomes, instructor info, certification, and outcome highlights are stored in a single `attributes` JSON column on the product table.
 
@@ -2984,7 +3231,7 @@ curl -s -X PUT http://localhost:8080/api/v1/admin/catalogue/setAttributes/1 \
 
 ---
 
-## 9. Complete Error Codes Reference
+## 10. Complete Error Codes Reference
 
 ### Global
 
@@ -3127,4 +3374,5 @@ curl -s -X PUT http://localhost:8080/api/v1/admin/catalogue/setAttributes/1 \
 
 - `VIDEO`
 - `PDF`
+- `PPT`
 

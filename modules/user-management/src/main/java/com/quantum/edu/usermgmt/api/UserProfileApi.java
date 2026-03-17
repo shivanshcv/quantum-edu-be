@@ -16,7 +16,12 @@ public interface UserProfileApi {
     Optional<UserProfile> getProfile(Long userId);
 
     /**
-     * Updates billing info for the user. Splits billingName on first space into firstName/lastName.
+     * Updates profile name and phone. Does not change billing info.
+     */
+    UserProfile updateProfile(Long userId, String firstName, String lastName, String phone);
+
+    /**
+     * Updates billing info for the user. Billing name is stored separately from profile name.
      * Profile must exist (created at signup).
      */
     UserProfile updateBillingInfo(Long userId, String billingName, String addressLine1,

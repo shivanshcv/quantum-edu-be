@@ -10,6 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class ComponentResponse {
+    private String id;
     private String type;
     private Map<String, Object> config;
     private Object details;

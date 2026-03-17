@@ -42,6 +42,10 @@
         </dependency>
         <dependency>
             <groupId>com.quantum.edu</groupId>
+            <artifactId>auth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.quantum.edu</groupId>
             <artifactId>user-management</artifactId>
         </dependency>
         <dependency>

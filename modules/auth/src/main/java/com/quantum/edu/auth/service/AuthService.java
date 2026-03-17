@@ -191,4 +191,19 @@ public class AuthService {
                 .message("If an account exists with this email, a verification link has been sent.")
                 .build();
     }
+
+    @Transactional
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        AuthUser user = authUserRepository.findById(userId)
+                .orElseThrow(() -> new InternalException(InternalErrorCode.INVALID_CREDENTIALS));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            log.error("Auth change-password failed: invalid current password, userId={}", userId);
+            throw new InternalException(InternalErrorCode.INVALID_CREDENTIALS);
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        authUserRepository.save(user);
+        log.info("Auth change-password success for userId={}", userId);
+    }
 }

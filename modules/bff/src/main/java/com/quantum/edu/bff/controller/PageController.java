@@ -8,6 +8,7 @@ import com.quantum.edu.bff.service.HomePageService;
 import com.quantum.edu.bff.service.PDPPageService;
 import com.quantum.edu.bff.service.CartPageService;
 import com.quantum.edu.bff.service.MyLearningPageService;
+import com.quantum.edu.bff.service.SettingsPageService;
 import com.quantum.edu.bff.service.VerifyCartPageService;
 import com.quantum.edu.common.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -24,19 +25,29 @@ public class PageController {
     private final CartPageService cartPageService;
     private final MyLearningPageService myLearningPageService;
     private final VerifyCartPageService verifyCartPageService;
+    private final SettingsPageService settingsPageService;
 
     public PageController(HomePageService homePageService,
                           CoursesPageService coursesPageService,
                           PDPPageService pdpPageService,
                           CartPageService cartPageService,
                           MyLearningPageService myLearningPageService,
-                          VerifyCartPageService verifyCartPageService) {
+                          VerifyCartPageService verifyCartPageService,
+                          SettingsPageService settingsPageService) {
         this.homePageService = homePageService;
         this.coursesPageService = coursesPageService;
         this.pdpPageService = pdpPageService;
         this.cartPageService = cartPageService;
         this.myLearningPageService = myLearningPageService;
         this.verifyCartPageService = verifyCartPageService;
+        this.settingsPageService = settingsPageService;
+    }
+
+    @GetMapping("/settings")
+    public ResponseEntity<ApiResponse<PageResponse>> settingsPage(
+            @RequestAttribute("userId") Long userId) {
+        PageResponse response = settingsPageService.getSettingsPage(userId);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/home")

@@ -24,6 +24,17 @@ public class UserProfileApiImpl implements UserProfileApi {
     }
 
     @Override
+    @Transactional
+    public UserProfile updateProfile(Long userId, String firstName, String lastName, String phone) {
+        UserProfile profile = userProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new InternalException(InternalErrorCode.USER_PROFILE_NOT_FOUND));
+        if (firstName != null && !firstName.isBlank()) profile.setFirstName(firstName.trim());
+        if (lastName != null) profile.setLastName(lastName.isBlank() ? null : lastName.trim());
+        if (phone != null) profile.setPhone(phone.isBlank() ? null : phone.trim());
+        return userProfileRepository.save(profile);
+    }
+
+    @Override
     public UserProfile createProfile(Long userId, String firstName, String lastName, String phone) {
         if (userProfileRepository.existsByUserId(userId)) {
             throw new InternalException(InternalErrorCode.USER_PROFILE_ALREADY_EXISTS);
@@ -44,14 +55,7 @@ public class UserProfileApiImpl implements UserProfileApi {
                 .orElseThrow(() -> new InternalException(InternalErrorCode.USER_PROFILE_NOT_FOUND));
 
         if (billingName != null && !billingName.isBlank()) {
-            int spaceIdx = billingName.indexOf(' ');
-            if (spaceIdx > 0) {
-                profile.setFirstName(billingName.substring(0, spaceIdx).trim());
-                profile.setLastName(billingName.substring(spaceIdx + 1).trim());
-            } else {
-                profile.setFirstName(billingName.trim());
-                profile.setLastName(null);
-            }
+            profile.setBillingName(billingName.trim());
         }
         if (addressLine1 != null) profile.setAddressLine1(addressLine1);
         if (addressLine2 != null) profile.setAddressLine2(addressLine2);

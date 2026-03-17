@@ -22,6 +22,9 @@ public class UserProfile {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
+    @Column(name = "billing_name", length = 255)
+    private String billingName;
+
     @Column(name = "phone", length = 20)
     private String phone;
 
@@ -95,6 +98,10 @@ public class UserProfile {
         this.lastName = lastName;
     }
 
+    public void setBillingName(String billingName) {
+        this.billingName = billingName;
+    }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -159,7 +166,9 @@ public class UserProfile {
      * Returns true if user has complete billing info (name, address, city, state, country, postal code).
      */
     public boolean hasBillingInfo() {
-        return addressLine1 != null && !addressLine1.isBlank()
+        String name = getBillingName();
+        return name != null && !name.isBlank()
+                && addressLine1 != null && !addressLine1.isBlank()
                 && city != null && !city.isBlank()
                 && state != null && !state.isBlank()
                 && country != null && !country.isBlank()
@@ -167,9 +176,12 @@ public class UserProfile {
     }
 
     /**
-     * Billing name derived from firstName + lastName.
+     * Billing name: uses billing_name if set, otherwise firstName + lastName.
      */
     public String getBillingName() {
+        if (billingName != null && !billingName.isBlank()) {
+            return billingName;
+        }
         if (lastName != null && !lastName.isBlank()) {
             return firstName + " " + lastName;
         }
