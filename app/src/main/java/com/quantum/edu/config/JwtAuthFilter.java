@@ -72,6 +72,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String authHeader = request.getHeader("Authorization");
+        String xUserId = request.getHeader("X-User-Id");
+
+        // Dev bypass: allow X-User-Id header without Bearer token (for E2E tests, local dev)
+        if (devBypass && xUserId != null && !xUserId.isBlank()) {
+            try {
+                long userId = Long.parseLong(xUserId.trim());
+                request.setAttribute("userId", userId);
+                request.setAttribute("isVerified", true);
+                filterChain.doFilter(request, response);
+                return;
+            } catch (NumberFormatException ignored) {
+                // Fall through to normal auth
+            }
+        }
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             sendUnauthorized(response);
             return;
