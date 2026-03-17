@@ -43,10 +43,9 @@ public class LmsPlayerData {
         private String description;
         private int durationMinutes;
         private String status; // completed, in_progress, not_started, locked
-        private String videoUrl;
-        private String pdfUrl;
+        private String url; // Media URL: video, pdf, or ppt based on type
         private String moduleType; // LESSON, QUIZ
-        private String type; // VIDEO, PDF (for LESSON); null for QUIZ
+        private String type; // VIDEO, PDF, PPT (for LESSON); null for QUIZ
         private AssessmentData assessment; // For QUIZ only: questions and options for display
     }
 

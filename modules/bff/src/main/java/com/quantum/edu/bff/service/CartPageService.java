@@ -5,8 +5,10 @@ import com.quantum.edu.cart.api.CartApi;
 import com.quantum.edu.cart.dto.CartItemResponse;
 import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.dto.ProductDetailResponse;
+import com.quantum.edu.common.util.CurrencyFormatter;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +17,13 @@ public class CartPageService {
 
     private final CartApi cartApi;
     private final ProductCatalogueApi productCatalogueApi;
+    private final CurrencyFormatter currencyFormatter;
 
-    public CartPageService(CartApi cartApi, ProductCatalogueApi productCatalogueApi) {
+    public CartPageService(CartApi cartApi, ProductCatalogueApi productCatalogueApi,
+                           CurrencyFormatter currencyFormatter) {
         this.cartApi = cartApi;
         this.productCatalogueApi = productCatalogueApi;
+        this.currencyFormatter = currencyFormatter;
     }
 
     public PageResponse getCartPage(Long userId) {
@@ -28,6 +33,10 @@ public class CartPageService {
         if (cartResponse.getItems() != null) {
             for (CartItemResponse cartItem : cartResponse.getItems()) {
                 ProductDetailResponse product = productCatalogueApi.getPublishedProductById(cartItem.getProductId());
+                BigDecimal displayPrice = product.getDiscountPrice() != null
+                        && product.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
+                        ? product.getDiscountPrice()
+                        : product.getPrice();
                 CartItemWithProductDto.ProductSummary productSummary = CartItemWithProductDto.ProductSummary.builder()
                         .id(product.getId())
                         .title(product.getTitle())
@@ -35,6 +44,9 @@ public class CartPageService {
                         .shortDescription(product.getShortDescription())
                         .price(product.getPrice())
                         .discountPrice(product.getDiscountPrice())
+                        .priceDetails(PriceDetailsResponse.builder()
+                                .price(currencyFormatter.format(displayPrice))
+                                .build())
                         .thumbnailUrl(product.getThumbnailUrl())
                         .difficultyLevel(product.getDifficultyLevel())
                         .durationMinutes(product.getDurationMinutes())

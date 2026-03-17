@@ -22,4 +22,5 @@ public class VerifyItemRequest {
     @NotNull
     private BigDecimal price;
     private BigDecimal discountPrice;
+    private boolean free;
 }

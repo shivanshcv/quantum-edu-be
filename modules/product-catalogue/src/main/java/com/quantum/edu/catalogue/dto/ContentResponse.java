@@ -29,6 +29,7 @@ public class ContentResponse {
         private String lessonType;
         private String videoUrl;
         private String pdfUrl;
+        private String pptUrl;
         private Integer durationSeconds;
     }
 

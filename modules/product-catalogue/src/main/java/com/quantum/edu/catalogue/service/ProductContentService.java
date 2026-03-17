@@ -53,6 +53,7 @@ public class ProductContentService {
                     request.getLessonType() != null ? request.getLessonType() : LessonType.VIDEO);
             lesson.setVideoUrl(request.getVideoUrl());
             lesson.setPdfUrl(request.getPdfUrl());
+            lesson.setPptUrl(request.getPptUrl());
             lesson.setDurationSeconds(request.getDurationSeconds());
             lessonRepository.save(lesson);
         } else if (request.getContentType() == ProductContent.ContentType.ASSESSMENT) {
@@ -80,6 +81,7 @@ public class ProductContentService {
                 if (request.getLessonType() != null) lesson.setLessonType(request.getLessonType());
                 if (request.getVideoUrl() != null) lesson.setVideoUrl(request.getVideoUrl());
                 if (request.getPdfUrl() != null) lesson.setPdfUrl(request.getPdfUrl());
+                if (request.getPptUrl() != null) lesson.setPptUrl(request.getPptUrl());
                 if (request.getDurationSeconds() != null) lesson.setDurationSeconds(request.getDurationSeconds());
                 lessonRepository.save(lesson);
             });
@@ -208,6 +210,7 @@ public class ProductContentService {
                             .lessonType(lesson.getLessonType().name())
                             .videoUrl(lesson.getVideoUrl())
                             .pdfUrl(lesson.getPdfUrl())
+                            .pptUrl(lesson.getPptUrl())
                             .durationSeconds(lesson.getDurationSeconds())
                             .build())
                     .orElse(null);

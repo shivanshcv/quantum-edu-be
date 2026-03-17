@@ -5,14 +5,13 @@ import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.dto.CategoryResponse;
 import com.quantum.edu.catalogue.dto.ProductListResponse;
+import com.quantum.edu.common.util.CurrencyFormatter;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -20,10 +19,13 @@ public class CoursesPageService {
 
     private final CourseCatalogProperties catalogProps;
     private final ProductCatalogueApi productCatalogueApi;
+    private final CurrencyFormatter currencyFormatter;
 
-    public CoursesPageService(CourseCatalogProperties catalogProps, ProductCatalogueApi productCatalogueApi) {
+    public CoursesPageService(CourseCatalogProperties catalogProps, ProductCatalogueApi productCatalogueApi,
+                              CurrencyFormatter currencyFormatter) {
         this.catalogProps = catalogProps;
         this.productCatalogueApi = productCatalogueApi;
+        this.currencyFormatter = currencyFormatter;
     }
 
     public PageResponse getCoursesPage(Long categoryId, int page, int size) {
@@ -105,7 +107,7 @@ public class CoursesPageService {
                         .alt(product.getTitle())
                         .build())
                 .priceDetails(PriceDetailsResponse.builder()
-                        .price(formatPrice(displayPrice))
+                        .price(currencyFormatter.format(displayPrice))
                         .build())
                 .ctas(List.of(CtaResponse.builder()
                         .label("Enroll Now")
@@ -117,9 +119,4 @@ public class CoursesPageService {
                 .build();
     }
 
-    private String formatPrice(BigDecimal price) {
-        if (price == null) return "$0.00";
-        NumberFormat fmt = NumberFormat.getCurrencyInstance(Locale.US);
-        return fmt.format(price);
-    }
 }

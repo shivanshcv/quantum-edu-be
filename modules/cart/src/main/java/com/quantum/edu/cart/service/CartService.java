@@ -11,6 +11,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,26 +27,26 @@ public class CartService {
     }
 
     @Transactional
-    public AddToCartResponse addItem(Long userId, Long productId) {
-        var existing = cartRepository.findByUserIdAndProductId(userId, productId);
-        if (existing.isPresent()) {
-            return AddToCartResponse.builder()
+    public AddToCartResponse addItems(Long userId, List<Long> productIds) {
+        List<CartItemResponse> added = new ArrayList<>();
+        for (Long productId : productIds) {
+            var existing = cartRepository.findByUserIdAndProductId(userId, productId);
+            if (existing.isPresent()) {
+                added.add(CartItemResponse.builder()
+                        .productId(productId)
+                        .addedAt(existing.get().getCreatedAt())
+                        .build());
+                continue;
+            }
+            CartItem item = new CartItem(userId, productId);
+            item = cartRepository.save(item);
+            entityManager.refresh(item);
+            added.add(CartItemResponse.builder()
                     .productId(productId)
-                    .addedAt(existing.get().getCreatedAt())
-                    .build();
+                    .addedAt(item.getCreatedAt())
+                    .build());
         }
-        // Phase 1: Single-item cart only
-        List<CartItem> cartItems = cartRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        if (!cartItems.isEmpty()) {
-            throw new InternalException(InternalErrorCode.CART_SINGLE_ITEM_ONLY);
-        }
-        CartItem item = new CartItem(userId, productId);
-        item = cartRepository.save(item);
-        entityManager.refresh(item); // Load DB-generated created_at
-        return AddToCartResponse.builder()
-                .productId(productId)
-                .addedAt(item.getCreatedAt())
-                .build();
+        return AddToCartResponse.builder().items(added).build();
     }
 
     @Transactional

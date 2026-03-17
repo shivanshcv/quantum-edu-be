@@ -40,5 +40,7 @@ public class UpdateProductRequest {
     @Min(0)
     private Integer durationMinutes;
 
+    private Boolean free;
+
     private Set<Long> categoryIds;
 }

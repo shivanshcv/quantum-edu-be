@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,6 +14,5 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 public class AddToCartResponse {
-    private Long productId;
-    private Instant addedAt;
+    private List<CartItemResponse> items;
 }

@@ -116,6 +116,20 @@ ApiResponse.error(ApiError.of("QE_AUTH_001", "Validation failed", details))
 - Column names: `snake_case`. JPA `@Column(name = "...")` explicit on every field.
 - Indexes: declared via `@Table(indexes = ...)` or `@Index`.
 
+## Configuration (application.properties / application-*.properties)
+
+**Rule: Every new or edited config must exist in every environment.**
+
+- **Environments:** `application.properties` (base), `application-dev.properties`, `application-staging.properties`, `application-prod.properties`.
+- **When adding a new config property:**
+  1. Add it to the base `application.properties` if it has sensible defaults.
+  2. Add it to **every** env-specific file: `application-dev.properties`, `application-staging.properties`, `application-prod.properties`.
+  3. If the value for an env is unknown, add a **placeholder** and a **TODO comment** (e.g. `# TODO: provide actual value for prod`).
+- **When editing an existing config:**
+  1. **Ask the user** for values for all other environments (dev, staging, prod) before making changes.
+  2. After user confirmation, update **all** env files consistently.
+- **Goal:** No inconsistency between environments. Any agent working with properties or YAML must ensure all envs are updated together.
+
 ## Documentation
 
 API specs live in `docs/`: `AUTH_API_SPEC.md`, `USER_MANAGEMENT_API_SPEC.md`, `API_RESPONSE_FORMAT.md`, `MODULAR_ARCHITECTURE.md`. When adding a new module with REST APIs, create a corresponding `docs/<MODULE>_API_SPEC.md`.

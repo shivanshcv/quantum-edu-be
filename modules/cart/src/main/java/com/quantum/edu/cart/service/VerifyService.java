@@ -4,6 +4,7 @@ import com.quantum.edu.cart.dto.*;
 import com.quantum.edu.cart.repository.CartRepository;
 import com.quantum.edu.common.exception.InternalErrorCode;
 import com.quantum.edu.common.exception.InternalException;
+import com.quantum.edu.common.util.CurrencyFormatter;
 import com.quantum.edu.ownership.api.OwnershipApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,17 +19,18 @@ import java.util.stream.Collectors;
 @Service
 public class VerifyService {
 
-    private static final String CURRENCY = "INR";
-
     private final CartRepository cartRepository;
     private final OwnershipApi ownershipApi;
+    private final CurrencyFormatter currencyFormatter;
 
     @Value("${cart.gst-rate:0.18}")
     private double gstRate;
 
-    public VerifyService(CartRepository cartRepository, OwnershipApi ownershipApi) {
+    public VerifyService(CartRepository cartRepository, OwnershipApi ownershipApi,
+                        CurrencyFormatter currencyFormatter) {
         this.cartRepository = cartRepository;
         this.ownershipApi = ownershipApi;
+        this.currencyFormatter = currencyFormatter;
     }
 
     public VerifyResponse verify(Long userId, VerifyRequest request) {
@@ -60,10 +62,13 @@ public class VerifyService {
                         .build());
                 continue;
             }
-            BigDecimal finalPrice = req.getDiscountPrice() != null && req.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
+            boolean isFree = req.isFree();
+            BigDecimal finalPrice = isFree ? BigDecimal.ZERO
+                    : (req.getDiscountPrice() != null && req.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
                     ? req.getDiscountPrice()
-                    : req.getPrice();
-            BigDecimal gstAmount = finalPrice.multiply(BigDecimal.valueOf(gstRate)).setScale(2, RoundingMode.HALF_UP);
+                    : req.getPrice());
+            BigDecimal gstAmount = isFree ? BigDecimal.ZERO
+                    : finalPrice.multiply(BigDecimal.valueOf(gstRate)).setScale(2, RoundingMode.HALF_UP);
 
             items.add(VerifyItemResponse.builder()
                     .productId(req.getProductId())
@@ -73,6 +78,7 @@ public class VerifyService {
                     .finalPrice(finalPrice)
                     .gstAmount(gstAmount)
                     .quantity(1)
+                    .free(isFree)
                     .build());
 
             subtotal = subtotal.add(finalPrice);
@@ -87,6 +93,7 @@ public class VerifyService {
         }
 
         BigDecimal finalAmount = subtotal.add(gstTotal);
+        boolean paymentRequired = finalAmount.compareTo(BigDecimal.ZERO) > 0;
 
         return VerifyResponse.builder()
                 .items(items)
@@ -94,7 +101,8 @@ public class VerifyService {
                 .subtotal(subtotal)
                 .gstAmount(gstTotal)
                 .finalAmount(finalAmount)
-                .currency(CURRENCY)
+                .currency(currencyFormatter.getCurrencyCode())
+                .paymentRequired(paymentRequired)
                 .build();
     }
 }

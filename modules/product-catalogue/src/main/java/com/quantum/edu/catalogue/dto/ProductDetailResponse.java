@@ -28,6 +28,7 @@ public class ProductDetailResponse {
     private String difficultyLevel;
     private Integer durationMinutes;
     private boolean published;
+    private boolean free;
     private ProductAttributes attributes;
     private List<CategoryResponse> categories;
     private List<ContentSummary> contents;
@@ -48,9 +49,8 @@ public class ProductDetailResponse {
         private boolean mandatory;
         private Long moduleId;
         private Integer durationSeconds;
-        private String videoUrl;
-        private String pdfUrl;
-        private String lessonType; // VIDEO, PDF (for LESSON only); null for ASSESSMENT
+        private String url; // Media URL: video_url, pdf_url, or ppt_url based on type
+        private String lessonType; // VIDEO, PDF, PPT (for LESSON only); null for ASSESSMENT
         private AssessmentSummary assessment; // For ASSESSMENT/QUIZ content only
     }
 

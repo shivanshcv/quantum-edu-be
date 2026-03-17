@@ -8,6 +8,7 @@ import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.dto.ProductDetailResponse;
 import com.quantum.edu.common.exception.InternalErrorCode;
 import com.quantum.edu.common.exception.InternalException;
+import com.quantum.edu.common.util.CurrencyFormatter;
 import com.quantum.edu.usermgmt.api.UserProfileApi;
 import com.quantum.edu.usermgmt.domain.UserProfile;
 import org.springframework.stereotype.Service;
@@ -43,12 +44,14 @@ public class VerifyCartPageService {
     private final CartApi cartApi;
     private final ProductCatalogueApi productCatalogueApi;
     private final UserProfileApi userProfileApi;
+    private final CurrencyFormatter currencyFormatter;
 
     public VerifyCartPageService(CartApi cartApi, ProductCatalogueApi productCatalogueApi,
-                                 UserProfileApi userProfileApi) {
+                                 UserProfileApi userProfileApi, CurrencyFormatter currencyFormatter) {
         this.cartApi = cartApi;
         this.productCatalogueApi = productCatalogueApi;
         this.userProfileApi = userProfileApi;
+        this.currencyFormatter = currencyFormatter;
     }
 
     public PageResponse getVerifyCartPage(Long userId, boolean isVerified, BffVerifyCartRequest request) {
@@ -66,12 +69,14 @@ public class VerifyCartPageService {
         List<VerifyItemRequest> verifyItems = new ArrayList<>();
         for (var cartItem : cartItems) {
             ProductDetailResponse product = productCatalogueApi.getPublishedProductById(cartItem.getProductId());
-            BigDecimal expectedFinalPrice = product.getDiscountPrice() != null
+            boolean isFree = product.isFree();
+            BigDecimal expectedFinalPrice = isFree ? BigDecimal.ZERO
+                    : (product.getDiscountPrice() != null
                     && product.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
                     ? product.getDiscountPrice()
-                    : product.getPrice();
-            BigDecimal fePrice = cartItem.getPrice() != null ? cartItem.getPrice().setScale(2, RoundingMode.HALF_UP) : null;
-            if (fePrice == null || fePrice.compareTo(expectedFinalPrice.setScale(2, RoundingMode.HALF_UP)) != 0) {
+                    : product.getPrice());
+            BigDecimal fePrice = cartItem.getPrice() != null ? cartItem.getPrice().setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO;
+            if (fePrice.compareTo(expectedFinalPrice.setScale(2, RoundingMode.HALF_UP)) != 0) {
                 throw new InternalException(InternalErrorCode.PRICE_MISMATCH);
             }
             verifyItems.add(VerifyItemRequest.builder()
@@ -79,6 +84,7 @@ public class VerifyCartPageService {
                     .title(product.getTitle())
                     .price(product.getPrice())
                     .discountPrice(product.getDiscountPrice())
+                    .free(isFree)
                     .build());
         }
 
@@ -109,9 +115,10 @@ public class VerifyCartPageService {
                 .loadingMessage("Loading checkout details...")
                 .errorMessage("Unable to load checkout details. Please try again.")
                 .items(List.of())
-                .subtotal("INR 0")
-                .taxes("INR 0")
-                .total("INR 0")
+                .subtotal(currencyFormatter.formatWithCode(BigDecimal.ZERO))
+                .taxes(currencyFormatter.formatWithCode(BigDecimal.ZERO))
+                .total(currencyFormatter.formatWithCode(BigDecimal.ZERO))
+                .paymentRequired(false)
                 .build();
 
         return buildPageResponse(details);
@@ -130,13 +137,14 @@ public class VerifyCartPageService {
                         .finalPrice(item.getFinalPrice())
                         .gstAmount(item.getGstAmount())
                         .quantity(item.getQuantity())
+                        .free(item.isFree())
                         .build());
             }
         }
 
-        String subtotal = formatCurrency(verifyResponse.getSubtotal());
-        String taxes = formatCurrency(verifyResponse.getGstAmount());
-        String total = formatCurrency(verifyResponse.getFinalAmount());
+        String subtotal = currencyFormatter.formatWithCode(verifyResponse.getSubtotal());
+        String taxes = currencyFormatter.formatWithCode(verifyResponse.getGstAmount());
+        String total = currencyFormatter.formatWithCode(verifyResponse.getFinalAmount());
 
         VerifyCartDetails details = VerifyCartDetails.builder()
                 .badge("CHECKOUT")
@@ -157,6 +165,7 @@ public class VerifyCartPageService {
                 .subtotal(subtotal)
                 .taxes(taxes)
                 .total(total)
+                .paymentRequired(verifyResponse.isPaymentRequired())
                 .build();
 
         return buildPageResponse(details);
@@ -198,11 +207,6 @@ public class VerifyCartPageService {
                 .verificationButtonText(isVerified ? null : "Verify Email")
                 .verificationButtonLink(isVerified ? null : "/verify-email")
                 .build();
-    }
-
-    private String formatCurrency(BigDecimal amount) {
-        if (amount == null) return "INR 0";
-        return "INR " + amount.setScale(0, java.math.RoundingMode.HALF_UP).toPlainString();
     }
 
     private PageResponse buildPageResponse(VerifyCartDetails details) {

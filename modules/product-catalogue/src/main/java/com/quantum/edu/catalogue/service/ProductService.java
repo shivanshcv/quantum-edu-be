@@ -53,6 +53,7 @@ public class ProductService {
         product.setThumbnailUrl(request.getThumbnailUrl());
         product.setPreviewVideoUrl(request.getPreviewVideoUrl());
         product.setDurationMinutes(request.getDurationMinutes());
+        product.setFree(request.isFree());
 
         if (request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()) {
             Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.getCategoryIds()));
@@ -82,6 +83,7 @@ public class ProductService {
         if (request.getPreviewVideoUrl() != null) product.setPreviewVideoUrl(request.getPreviewVideoUrl());
         if (request.getDifficultyLevel() != null) product.setDifficultyLevel(request.getDifficultyLevel());
         if (request.getDurationMinutes() != null) product.setDurationMinutes(request.getDurationMinutes());
+        if (request.getFree() != null) product.setFree(request.getFree());
 
         if (request.getCategoryIds() != null) {
             Set<Category> categories = new HashSet<>(categoryRepository.findAllById(request.getCategoryIds()));
@@ -222,6 +224,7 @@ public class ProductService {
                 .difficultyLevel(product.getDifficultyLevel() != null ? product.getDifficultyLevel().name() : null)
                 .durationMinutes(product.getDurationMinutes())
                 .published(product.isPublished())
+                .free(product.isFree())
                 .attributes(product.getAttributes())
                 .categories(categories)
                 .contents(contents)
@@ -233,8 +236,7 @@ public class ProductService {
 
     private ProductDetailResponse.ContentSummary toContentSummary(ProductContent content) {
         Integer durationSeconds = null;
-        String videoUrl = null;
-        String pdfUrl = null;
+        String url = null;
         String lessonType = null;
         ProductDetailResponse.AssessmentSummary assessmentSummary = null;
 
@@ -242,9 +244,8 @@ public class ProductService {
             Lesson lesson = lessonRepository.findByProductContentId(content.getId()).orElse(null);
             if (lesson != null) {
                 durationSeconds = lesson.getDurationSeconds();
-                videoUrl = lesson.getVideoUrl();
-                pdfUrl = lesson.getPdfUrl();
                 lessonType = lesson.getLessonType().name();
+                url = getMediaUrlForLessonType(lesson);
             }
         } else if (content.getContentType() == ProductContent.ContentType.ASSESSMENT) {
             assessmentSummary = assessmentRepository.findByProductContentIdWithQuestionsAndOptions(content.getId())
@@ -260,11 +261,18 @@ public class ProductService {
                 .mandatory(content.isMandatory())
                 .moduleId(content.getModule() != null ? content.getModule().getId() : null)
                 .durationSeconds(durationSeconds)
-                .videoUrl(videoUrl)
-                .pdfUrl(pdfUrl)
+                .url(url)
                 .lessonType(lessonType)
                 .assessment(assessmentSummary)
                 .build();
+    }
+
+    private String getMediaUrlForLessonType(Lesson lesson) {
+        return switch (lesson.getLessonType()) {
+            case VIDEO -> lesson.getVideoUrl();
+            case PDF -> lesson.getPdfUrl();
+            case PPT -> lesson.getPptUrl();
+        };
     }
 
     private ProductDetailResponse.AssessmentSummary toAssessmentSummary(Assessment assessment) {

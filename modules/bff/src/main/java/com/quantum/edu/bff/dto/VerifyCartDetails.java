@@ -28,4 +28,5 @@ public class VerifyCartDetails {
     private String subtotal;
     private String taxes;
     private String total;
+    private boolean paymentRequired;
 }

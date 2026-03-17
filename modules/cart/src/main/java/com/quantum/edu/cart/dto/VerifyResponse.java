@@ -21,4 +21,5 @@ public class VerifyResponse {
     private BigDecimal gstAmount;
     private BigDecimal finalAmount;
     private String currency;
+    private boolean paymentRequired;
 }

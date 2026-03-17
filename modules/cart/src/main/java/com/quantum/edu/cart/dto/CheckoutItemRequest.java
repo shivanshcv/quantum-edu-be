@@ -24,4 +24,5 @@ public class CheckoutItemRequest {
     private BigDecimal finalPrice;
     @NotNull
     private BigDecimal gstAmount;
+    private boolean free;
 }

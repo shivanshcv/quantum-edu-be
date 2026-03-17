@@ -62,6 +62,9 @@ public class Product {
     @Column(name = "is_featured", nullable = false)
     private boolean featured = false;
 
+    @Column(name = "is_free", nullable = false)
+    private boolean free = false;
+
     @Convert(converter = ProductAttributesConverter.class)
     @Column(columnDefinition = "json")
     private ProductAttributes attributes;

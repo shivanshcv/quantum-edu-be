@@ -4,8 +4,10 @@ import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.domain.ProductAttributes;
 import com.quantum.edu.catalogue.dto.ProductDetailResponse;
+import com.quantum.edu.common.util.CurrencyFormatter;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,11 @@ import java.util.Map;
 public class PDPPageService {
 
     private final ProductCatalogueApi productCatalogueApi;
+    private final CurrencyFormatter currencyFormatter;
 
-    public PDPPageService(ProductCatalogueApi productCatalogueApi) {
+    public PDPPageService(ProductCatalogueApi productCatalogueApi, CurrencyFormatter currencyFormatter) {
         this.productCatalogueApi = productCatalogueApi;
+        this.currencyFormatter = currencyFormatter;
     }
 
     public PageResponse getProductDetailPage(Long productId) {
@@ -51,9 +55,11 @@ public class PDPPageService {
                     .toList();
         }
 
-        String priceStr = product.getDiscountPrice() != null
-                ? "₹" + product.getDiscountPrice().toPlainString()
-                : "₹" + product.getPrice().toPlainString();
+        BigDecimal displayPrice = product.getDiscountPrice() != null
+                && product.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
+                ? product.getDiscountPrice()
+                : product.getPrice();
+        String priceStr = currencyFormatter.format(displayPrice);
 
         String badge = (attrs != null && attrs.getBadge() != null) ? attrs.getBadge() : null;
 

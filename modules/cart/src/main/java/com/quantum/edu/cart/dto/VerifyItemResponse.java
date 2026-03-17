@@ -21,4 +21,5 @@ public class VerifyItemResponse {
     private BigDecimal finalPrice;
     private BigDecimal gstAmount;
     private int quantity;
+    private boolean free;
 }

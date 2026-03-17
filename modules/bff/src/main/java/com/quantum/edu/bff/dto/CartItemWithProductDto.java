@@ -27,6 +27,7 @@ public class CartItemWithProductDto {
         private String shortDescription;
         private BigDecimal price;
         private BigDecimal discountPrice;
+        private PriceDetailsResponse priceDetails;
         private String thumbnailUrl;
         private String difficultyLevel;
         private Integer durationMinutes;

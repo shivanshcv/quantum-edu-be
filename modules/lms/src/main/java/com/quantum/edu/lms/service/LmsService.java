@@ -141,8 +141,7 @@ public class LmsService {
             }
 
             int durationMinutes = c.getDurationSeconds() != null ? (c.getDurationSeconds() + 59) / 60 : 0;
-            String videoUrl = "LESSON".equals(c.getContentType()) ? c.getVideoUrl() : null;
-            String pdfUrl = "LESSON".equals(c.getContentType()) ? c.getPdfUrl() : null;
+            String url = "LESSON".equals(c.getContentType()) ? c.getUrl() : null;
             String moduleType = "LESSON".equals(c.getContentType()) ? "LESSON" : "QUIZ";
             String type = "LESSON".equals(c.getContentType()) ? c.getLessonType() : null;
             LmsPlayerData.AssessmentData assessmentData = "ASSESSMENT".equals(c.getContentType()) && c.getAssessment() != null
@@ -155,8 +154,7 @@ public class LmsService {
                     .description(c.getTitle())
                     .durationMinutes(durationMinutes)
                     .status(status)
-                    .videoUrl(videoUrl)
-                    .pdfUrl(pdfUrl)
+                    .url(url)
                     .moduleType(moduleType)
                     .type(type)
                     .assessment(assessmentData)

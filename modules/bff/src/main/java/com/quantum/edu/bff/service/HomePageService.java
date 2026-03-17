@@ -4,12 +4,11 @@ import com.quantum.edu.bff.config.HeroSectionProperties;
 import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.dto.ProductListResponse;
+import com.quantum.edu.common.util.CurrencyFormatter;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -21,10 +20,13 @@ public class HomePageService {
 
     private final HeroSectionProperties heroProps;
     private final ProductCatalogueApi productCatalogueApi;
+    private final CurrencyFormatter currencyFormatter;
 
-    public HomePageService(HeroSectionProperties heroProps, ProductCatalogueApi productCatalogueApi) {
+    public HomePageService(HeroSectionProperties heroProps, ProductCatalogueApi productCatalogueApi,
+                           CurrencyFormatter currencyFormatter) {
         this.heroProps = heroProps;
         this.productCatalogueApi = productCatalogueApi;
+        this.currencyFormatter = currencyFormatter;
     }
 
     public PageResponse getHomePage() {
@@ -125,7 +127,7 @@ public class HomePageService {
                         .alt(product.getTitle())
                         .build())
                 .priceDetails(PriceDetailsResponse.builder()
-                        .price(formatPrice(displayPrice))
+                        .price(currencyFormatter.format(displayPrice))
                         .build())
                 .ctas(List.of(CtaResponse.builder()
                         .label("Enroll Now")
@@ -137,9 +139,4 @@ public class HomePageService {
                 .build();
     }
 
-    private String formatPrice(BigDecimal price) {
-        if (price == null) return "$0.00";
-        NumberFormat fmt = NumberFormat.getCurrencyInstance(Locale.US);
-        return fmt.format(price);
-    }
 }

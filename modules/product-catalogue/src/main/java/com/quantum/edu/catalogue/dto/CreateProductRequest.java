@@ -42,5 +42,7 @@ public class CreateProductRequest {
     @Min(0)
     private Integer durationMinutes;
 
+    private boolean free;
+
     private Set<Long> categoryIds;
 }

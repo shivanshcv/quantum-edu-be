@@ -14,9 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CheckoutResponse {
+    private boolean paymentRequired;
     private String razorpayOrderId;
     private Long amount;
     private String currency;
     private String keyId;
     private List<Long> orderIds;
+    private List<Long> freeOrderIds;
 }

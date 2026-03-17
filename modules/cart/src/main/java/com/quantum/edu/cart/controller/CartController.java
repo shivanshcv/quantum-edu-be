@@ -27,7 +27,7 @@ public class CartController {
     public ResponseEntity<ApiResponse<AddToCartResponse>> addItems(
             @RequestAttribute("userId") Long userId,
             @Valid @RequestBody AddToCartRequest request) {
-        AddToCartResponse response = cartService.addItem(userId, request.getProductId());
+        AddToCartResponse response = cartService.addItems(userId, request.getProductIds());
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

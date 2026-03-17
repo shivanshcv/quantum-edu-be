@@ -25,6 +25,9 @@ public class UpdateContentRequest {
     @Size(max = 500)
     private String pdfUrl;
 
+    @Size(max = 500)
+    private String pptUrl;
+
     @Min(0)
     private Integer durationSeconds;
 
