@@ -2,6 +2,8 @@
 
 This guide helps you deploy `quantum-edu-be` so it works with your Netlify frontend, matching local behavior.
 
+**For AWS deployment (staging on free credits):** See [AWS_DEPLOYMENT_GUIDE.md](./AWS_DEPLOYMENT_GUIDE.md).
+
 ---
 
 ## Staging: Render + Aiven (Recommended for Staging)
