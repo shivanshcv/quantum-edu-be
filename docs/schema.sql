@@ -93,11 +93,15 @@ CREATE TABLE product (
 
 -- ---------------------------------------------------------------------------
 -- 5. product_category (many-to-many join table)
+-- id column added for Django admin; Spring Boot uses product_id/category_id only.
+-- For existing DBs with composite PK, run: docs/migrations/add-product-category-id.sql
 -- ---------------------------------------------------------------------------
 CREATE TABLE product_category (
+    id BIGINT NOT NULL AUTO_INCREMENT,
     product_id BIGINT NOT NULL,
     category_id BIGINT NOT NULL,
-    PRIMARY KEY (product_id, category_id),
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_product_category_product_category (product_id, category_id),
     KEY idx_product_category_category_id (category_id),
     CONSTRAINT fk_product_category_product FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE,
     CONSTRAINT fk_product_category_category FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE

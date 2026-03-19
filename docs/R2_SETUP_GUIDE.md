@@ -1,6 +1,57 @@
-# Cloudflare R2 Setup Guide (Manual Upload)
+# Cloudflare R2 Setup Guide
 
-This guide walks you through setting up an R2 bucket and getting public URLs for media files. You'll upload manually, copy URLs, and we'll update the DB for testing.
+This guide covers R2 bucket setup, public access, and API tokens for programmatic uploads (e.g. Django admin).
+
+---
+
+## Create R2 API Token (for Django Admin Upload)
+
+Use this when you need to upload files from Django admin to R2.
+
+### Step 1: Open R2 API Tokens
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → log in.
+2. In the left sidebar, click **R2 Object Storage**.
+3. Click **Manage R2 API Tokens** (top right, or under Overview).
+
+### Step 2: Create API Token
+
+1. Click **Create API token**.
+2. **Token name**: e.g. `quantum-edu-django-admin`.
+3. **Permissions**: Select **Object Read & Write**.
+4. **Specify bucket(s)**: Optional. Leave "Apply to all buckets" or restrict to `quantum-edu-media`.
+5. **TTL**: Optional. Leave blank for no expiry.
+6. Click **Create API Token**.
+
+### Step 3: Save Credentials
+
+You will see:
+
+- **Access Key ID** (e.g. `a1b2c3d4e5f6...` — long alphanumeric string)
+- **Secret Access Key** (e.g. `xyz123...` — another long string)
+
+**Important:** Copy both values immediately. The Secret Access Key is shown only once and cannot be retrieved later.
+
+**Note:** This is different from a Cloudflare API token (which starts with `cfut_`). R2 S3 API requires the Access Key ID and Secret Access Key from **Manage R2 API Tokens**.
+
+### Step 4: Get Your Account ID
+
+1. In Cloudflare Dashboard, go to **R2** → **Overview**.
+2. Your **Account ID** is shown in the right sidebar (or in the URL: `dash.cloudflare.com/<ACCOUNT_ID>/r2`).
+
+### Step 5: Configure Django (quantum-edu-admin)
+
+Add to `.env`:
+
+```
+R2_ACCOUNT_ID=your_account_id
+R2_ACCESS_KEY_ID=your_access_key_id
+R2_SECRET_ACCESS_KEY=your_secret_access_key
+R2_BUCKET_NAME=quantum-edu-media
+R2_PUBLIC_URL=https://pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev
+```
+
+R2 S3 endpoint: `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`
 
 ---
 

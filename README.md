@@ -76,3 +76,7 @@ mvn test
 - [API Response Format](docs/API_RESPONSE_FORMAT.md)
 - [Auth API Spec](docs/AUTH_API_SPEC.md)
 - [User Management API Spec](docs/USER_MANAGEMENT_API_SPEC.md)
+
+## Admin Panel
+
+Django admin for managing courses, products, and data: `quantum-edu-admin` (sibling repo). See [docs/DJANGO_ADMIN_SETUP.md](docs/DJANGO_ADMIN_SETUP.md) for migration requirements.

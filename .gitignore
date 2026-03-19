@@ -43,3 +43,6 @@ pom.xml.next
 
 # Spring Boot
 spring-boot-devtools.properties
+
+# Deploy secrets (never commit)
+deploy.env

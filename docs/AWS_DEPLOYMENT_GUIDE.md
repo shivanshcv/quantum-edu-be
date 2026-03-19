@@ -337,13 +337,13 @@ curl http://<EC2_PUBLIC_IP>:8080/api/v1/catalogue/getCategories
 
 ### Step 12: Update Frontend
 
-In your FE repo (e.g. Netlify env vars):
+In your FE (Netlify env vars), set:
 
 ```
-VITE_API_BASE_URL=http://<EC2_PUBLIC_IP>:8080
+NEXT_PUBLIC_API_URL=http://<EC2_PUBLIC_IP>:8080
 ```
 
-Redeploy the frontend.
+Redeploy the frontend. See [NETLIFY_AWS_CONNECTION_GUIDE.md](./NETLIFY_AWS_CONNECTION_GUIDE.md) for full details.
 
 ---
 
@@ -473,6 +473,23 @@ When moving to paid:
 
 ---
 
+## One-Command Deploy (deploy.sh)
+
+After initial setup, use the deploy script to push latest code:
+
+```bash
+# 1. First-time only: create deploy.env from template
+cp deploy.env.example deploy.env
+# Edit deploy.env with your EC2 host, RDS credentials, JWT secret, etc.
+
+# 2. Deploy (builds locally, pushes to ECR, deploys on EC2)
+./deploy.sh
+```
+
+**Prerequisites:** AWS CLI configured (`aws configure`), Docker running, SSH key at path in `deploy.env`.
+
+---
+
 ## Quick Reference
 
 | Task | Time | Link |
@@ -484,6 +501,8 @@ When moving to paid:
 | RDS | 15–20 min | Same |
 | EC2 | 15–20 min | Same |
 | EC2 + ECR deploy | 30–60 min | This guide |
+| FE + GoDaddy domain | 60–90 min | [FE_AWS_DEPLOYMENT_GUIDE.md](./FE_AWS_DEPLOYMENT_GUIDE.md) |
+| Netlify FE ↔ AWS BE | 15–30 min | [NETLIFY_AWS_CONNECTION_GUIDE.md](./NETLIFY_AWS_CONNECTION_GUIDE.md) |
 
 ---
 
