@@ -81,6 +81,7 @@ CREATE TABLE product (
     duration_minutes INT,
     is_published TINYINT(1) NOT NULL DEFAULT 0,
     is_featured TINYINT(1) NOT NULL DEFAULT 0,
+    is_free TINYINT(1) NOT NULL DEFAULT 0,
     attributes JSON,
     created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),

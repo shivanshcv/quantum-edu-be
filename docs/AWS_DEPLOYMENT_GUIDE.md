@@ -115,7 +115,7 @@ This section walks you through deploying the backend on AWS staging from scratch
 3. **Settings** → **Public access** → **Allow Access** → choose **R2.dev subdomain**.
 4. **Objects** → **Upload** → upload `thumbnail.jpg`, `video.mp4` (or your media).
 5. Note the public base URL: `https://pub-xxxxx.r2.dev`.
-6. If your R2 URL differs from `pub-96a817cca5de440db5e3364bbb57f3ed.r2.dev`, update `docs/seed-test-data.sql` and `docs/migrations/add-lms-course-saisseru.sql` with your base URL before running migrations.
+6. If you add products via admin API, use your R2 base URL for thumbnail/video URLs. No seed data is run in deployment.
 7. **CORS:** If your FE loads media directly from R2, add your FE origin in bucket **Settings** → **CORS policy**.
 
 ---
@@ -226,20 +226,21 @@ usermod -aG docker ubuntu
 
 ---
 
-### Step 8: Run Database Migrations from EC2
+### Step 8: Run Database Migrations from EC2 (Schema Only, No Test Data)
 
-RDS is private, so migrations must run from EC2 (same VPC).
+RDS is private, so migrations must run from EC2 (same VPC). Only `schema.sql` is used; no seed or test data.
 
-**8a. Copy migration files to EC2** (from your machine):
+**8a. Copy schema.sql to EC2** (from `quantum-edu-be` directory):
 
 ```bash
-scp -i your-key.pem -r docs/ ubuntu@<EC2_PUBLIC_IP>:~/quantum-edu-be-docs/
+cd quantum-edu-be   # or your repo path
+scp -i ~/Downloads/your-key.pem docs/schema.sql ubuntu@<EC2_PUBLIC_IP>:~/schema.sql
 ```
 
-**8b. SSH to EC2 and run migrations:**
+**8b. SSH to EC2 and run schema:**
 
 ```bash
-ssh -i your-key.pem ubuntu@<EC2_PUBLIC_IP>
+ssh -i ~/Downloads/your-key.pem ubuntu@<EC2_PUBLIC_IP>
 
 # Install MySQL client (Ubuntu)
 sudo apt update
@@ -251,16 +252,11 @@ RDS_USER="admin"
 RDS_PASS="<your-password>"
 RDS_DB="quantum_education"
 
-# Run migrations (order matters)
-mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/quantum-edu-be-docs/schema.sql
-mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/quantum-edu-be-docs/migrations/add-product-is-free.sql
-mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/quantum-edu-be-docs/seed-test-data.sql
-mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/quantum-edu-be-docs/migrations/add-modules-for-locked-flow.sql
-mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/quantum-edu-be-docs/migrations/add-lms-course-saisseru.sql
-mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/quantum-edu-be-docs/migrations/add-quiz-test-data-saisseru.sql
+# Run schema only (creates all tables)
+mysql -h $RDS_HOST -P 3306 -u $RDS_USER -p"$RDS_PASS" $RDS_DB < ~/schema.sql
 ```
 
-**Alternative:** If your repo is public, clone on EC2: `git clone <your-repo-url>`, then run `mysql ... < repo/docs/schema.sql` etc.
+**Note:** `schema.sql` is kept in sync with your local MySQL. No separate migrations needed.
 
 ---
 
@@ -325,7 +321,7 @@ curl http://<EC2_PUBLIC_IP>:8080/health
 # Expected: {"status":"UP"}
 
 curl http://<EC2_PUBLIC_IP>:8080/api/v1/catalogue/getCategories
-# Expected: JSON with categories
+# Expected: JSON (empty array if no seed data; add categories via admin API)
 ```
 
 ---
@@ -402,7 +398,7 @@ sudo docker pull ${ECR_URI}:latest
 | **JWT secret** | Default in staging is weak. | Override with `openssl rand -base64 32` for staging. |
 | **PORT** | `server.port=${PORT:8080}`. EC2 does not set `PORT`. | Default 8080 is used; no change needed. |
 | **Health check** | `/health` exists. | No change; suitable for load balancers. |
-| **Product `is_free`** | Schema does not include it; migration adds it. | Run `add-product-is-free.sql` before seed (see Step 8). |
+| **Product `is_free`** | Included in schema.sql. | No separate migration needed. |
 
 ### Recommended Repo Updates (Optional)
 

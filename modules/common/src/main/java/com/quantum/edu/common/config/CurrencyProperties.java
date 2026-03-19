@@ -19,5 +19,5 @@ public class CurrencyProperties {
     /**
      * Currency symbol for display (e.g. ₹, $).
      */
-    private String symbol = "₹";
+    private String symbol = "\u20B9";
 }

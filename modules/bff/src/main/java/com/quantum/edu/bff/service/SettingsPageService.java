@@ -70,6 +70,7 @@ public class SettingsPageService {
         values.put("name", name);
         values.put("email", email != null ? email : "");
         values.put("phone", phone);
+        values.put("mobile", phone);  // alias for FE compatibility
         values.put("billingName", billingName);
         values.put("billingAddressLine1", profile != null && profile.getAddressLine1() != null ? profile.getAddressLine1() : "");
         values.put("billingAddressLine2", profile != null && profile.getAddressLine2() != null ? profile.getAddressLine2() : "");
