@@ -384,7 +384,7 @@ sudo docker pull ${ECR_URI}:latest
 | CORS | `application-staging.properties` | `APP_CORS_ORIGINS` with Netlify default |
 | JWT | `application-staging.properties` | `JWT_SECRET` with dev default; override for staging |
 | Razorpay | `application-staging.properties` | Test keys; `RAZORPAY_*` env vars |
-| Email | `application-staging.properties` | Disabled by default (`APP_EMAIL_ENABLED=false`) |
+| Email | `application-staging.properties` | Mailpit for staging; see [STAGING_EMAIL_VERIFICATION_FLOW.md](./STAGING_EMAIL_VERIFICATION_FLOW.md) |
 | Dockerfile | repo root | Builds JAR; no `SPRING_PROFILES_ACTIVE` (set via env) |
 
 ### What's Missing or Needs Attention

@@ -63,7 +63,9 @@ public class AuthService {
                 request.getPhone()
         );
 
+        log.info("[AUTH] Signup: sending verification email to {}, userId={}", request.getEmail(), authUser.getId());
         notificationService.sendVerification(request.getEmail(), verificationToken);
+        log.debug("[AUTH] Signup: sendVerification completed for {}", request.getEmail());
 
         String token = jwtService.generateToken(authUser);
         Instant expiresAt = jwtService.getExpiryInstant(token);
@@ -177,8 +179,9 @@ public class AuthService {
                 Instant expiry = Instant.now().plusSeconds(VERIFICATION_TOKEN_EXPIRY_HOURS * 3600L);
                 user.setEmailVerification(token, expiry);
                 authUserRepository.save(user);
+                log.info("[AUTH] Resend-verification: sending verification email to {}, userId={}", email, user.getId());
                 notificationService.sendVerification(user.getEmail(), token);
-                log.info("Auth resend-verification: verification email sent, email={}, userId={}", email, user.getId());
+                log.info("[AUTH] Resend-verification: verification email sent, email={}, userId={}", email, user.getId());
             } else {
                 log.info("Auth resend-verification: user already verified, email={}, userId={}", email, user.getId());
             }
