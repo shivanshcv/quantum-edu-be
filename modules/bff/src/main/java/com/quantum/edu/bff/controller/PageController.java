@@ -89,9 +89,8 @@ public class PageController {
     @PostMapping("/verify-cart")
     public ResponseEntity<ApiResponse<PageResponse>> verifyCartPage(
             @RequestAttribute("userId") Long userId,
-            @RequestAttribute("isVerified") boolean isVerified,
             @Valid @RequestBody BffVerifyCartRequest request) {
-        PageResponse response = verifyCartPageService.getVerifyCartPage(userId, isVerified, request);
+        PageResponse response = verifyCartPageService.getVerifyCartPage(userId, request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

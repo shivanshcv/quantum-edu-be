@@ -1,5 +1,6 @@
 package com.quantum.edu.bff.service;
 
+import com.quantum.edu.auth.api.AuthApi;
 import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.cart.api.CartApi;
 import com.quantum.edu.cart.dto.VerifyItemRequest;
@@ -44,22 +45,27 @@ public class VerifyCartPageService {
     private final CartApi cartApi;
     private final ProductCatalogueApi productCatalogueApi;
     private final UserProfileApi userProfileApi;
+    private final AuthApi authApi;
     private final CurrencyFormatter currencyFormatter;
 
     public VerifyCartPageService(CartApi cartApi, ProductCatalogueApi productCatalogueApi,
-                                 UserProfileApi userProfileApi, CurrencyFormatter currencyFormatter) {
+                                 UserProfileApi userProfileApi, AuthApi authApi,
+                                 CurrencyFormatter currencyFormatter) {
         this.cartApi = cartApi;
         this.productCatalogueApi = productCatalogueApi;
         this.userProfileApi = userProfileApi;
+        this.authApi = authApi;
         this.currencyFormatter = currencyFormatter;
     }
 
-    public PageResponse getVerifyCartPage(Long userId, boolean isVerified, BffVerifyCartRequest request) {
+    public PageResponse getVerifyCartPage(Long userId, BffVerifyCartRequest request) {
         Optional<UserProfile> profileOpt = userProfileApi.getProfile(userId);
         UserProfile profile = profileOpt.orElse(null);
 
         boolean billingAvailable = profile != null && profile.hasBillingInfo();
         String billingGstNumber = (profile != null && profile.getGstNumber() != null) ? profile.getGstNumber() : null;
+
+        boolean isVerified = authApi.isVerifiedByUserId(userId);
 
         var cartItems = request.getItems();
         if (cartItems == null || cartItems.isEmpty()) {

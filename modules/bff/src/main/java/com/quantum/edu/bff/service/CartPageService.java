@@ -30,6 +30,7 @@ public class CartPageService {
         var cartResponse = cartApi.getCart(userId);
 
         List<CartItemWithProductDto> items = new ArrayList<>();
+        BigDecimal subtotal = BigDecimal.ZERO;
         if (cartResponse.getItems() != null) {
             for (CartItemResponse cartItem : cartResponse.getItems()) {
                 ProductDetailResponse product = productCatalogueApi.getPublishedProductById(cartItem.getProductId());
@@ -37,6 +38,7 @@ public class CartPageService {
                         && product.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
                         ? product.getDiscountPrice()
                         : product.getPrice();
+                subtotal = subtotal.add(displayPrice);
                 CartItemWithProductDto.ProductSummary productSummary = CartItemWithProductDto.ProductSummary.builder()
                         .id(product.getId())
                         .title(product.getTitle())
@@ -61,6 +63,8 @@ public class CartPageService {
 
         CartPageDetails details = CartPageDetails.builder()
                 .items(items)
+                .subtotal(subtotal)
+                .subtotalFormatted(currencyFormatter.format(subtotal))
                 .build();
 
         ComponentResponse component = ComponentResponse.builder()

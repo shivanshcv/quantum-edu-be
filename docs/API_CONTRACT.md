@@ -1636,16 +1636,16 @@ curl -s http://localhost:8080/health
 #### Request
 
 
-| Field     | Type | Required | Description                                                   |
-| --------- | ---- | -------- | ------------------------------------------------------------- |
-| productId | long | Yes      | Product ID to add (BFF validates via Product Catalogue first) |
+| Field      | Type   | Required | Description                                                       |
+| ---------- | ------ | -------- | ----------------------------------------------------------------- |
+| productIds | long[] | Yes      | Product IDs to add (BFF validates via Product Catalogue first).   |
 
 
 #### Request Body
 
 ```json
 {
-  "productId": 1
+  "productIds": [1, 2]
 }
 ```
 
@@ -1655,13 +1655,21 @@ curl -s http://localhost:8080/health
 {
   "success": true,
   "response": {
-    "productId": 1,
-    "addedAt": "2025-02-19T10:30:00Z"
+    "items": [
+      {
+        "productId": 1,
+        "addedAt": "2025-02-19T10:30:00Z"
+      },
+      {
+        "productId": 2,
+        "addedAt": "2025-02-19T10:30:01Z"
+      }
+    ]
   }
 }
 ```
 
-Idempotent: returns 200 if product already in cart.
+Idempotent: returns 200 if product(s) already in cart. Supports batch add of multiple products.
 
 **Phase 1:** Cart supports only one item. If the cart already has a different product, returns `QE_CART_008`. Remove the existing item first.
 
@@ -1679,7 +1687,7 @@ Idempotent: returns 200 if product already in cart.
 curl -s -X POST http://localhost:8080/api/v1/cart/addItems \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{"productId": 1}'
+  -d '{"productIds": [1]}'
 ```
 
 ---
@@ -2457,6 +2465,7 @@ Returns the Product Detail Page structure with five components: `COURSE_HERO_DET
             "badge": "BESTSELLER",
             "title": "Advanced Medical Aesthetics",
             "shortDescription": "Master advanced medical aesthetics techniques.",
+            "longDescription": "This comprehensive course covers advanced injection techniques, facial anatomy, and safety protocols. Designed for practicing professionals seeking to expand their skill set.",
             "image": { "src": "/images/course1.png", "alt": "Advanced Medical Aesthetics" },
             "highlights": [
               { "icon": "Clock", "label": "Duration", "value": "8 Weeks" },
@@ -2465,7 +2474,7 @@ Returns the Product Detail Page structure with five components: `COURSE_HERO_DET
             ],
             "priceDetails": { "price": "₹1999.00" },
             "ctas": [
-              { "label": "Enroll Now", "action": "ENROLL", "variant": "primary" }
+              { "label": "Add to Cart", "action": "ENROLL", "variant": "primary" }
             ]
           }
         },
@@ -2555,7 +2564,7 @@ curl -s "http://localhost:8080/pages/course?productId=1"
 
 #### Notes
 
-- **COURSE_HERO_DETAILS**: Basic product info, highlights, pricing, and CTAs.
+- **COURSE_HERO_DETAILS**: Basic product info (`shortDescription`, `longDescription`), highlights, pricing, and CTAs.
 - **COURSE_LEARNING_OUTCOMES**: Ordered list of learning outcomes. `checked` is always `true`.
 - **COURSE_SYLLABUS**: Hierarchical structure — modules containing lessons. Duration is computed from lesson `durationSeconds`.
 - **INSTRUCTOR_PROFILE**: Instructor data with credentials. `null` if no instructor is assigned.
@@ -2644,7 +2653,7 @@ curl -s http://localhost:8080/pages/my-learning \
 **Endpoint:** `GET /pages/cart`  
 **Auth Required:** Yes (JWT Bearer token)
 
-BFF calls Cart's getCart API, then fetches product details from Product Catalogue for each cart item. Returns cart items enriched with full product details so FE can display product info (title, price, thumbnail, description, etc.) in the cart view.
+BFF calls Cart's getCart API, then fetches product details from Product Catalogue for each cart item. Returns **all** cart items enriched with full product details so FE can display product info (title, price, thumbnail, description, etc.) in the cart view. After adding multiple products (one per PDP visit), all items appear in the response.
 
 #### Success Response (200 OK)
 
@@ -2659,6 +2668,8 @@ BFF calls Cart's getCart API, then fetches product details from Product Catalogu
           "type": "CART",
           "config": { "theme": "light" },
           "details": {
+            "subtotal": 2098.00,
+            "subtotalFormatted": "₹2,098",
             "items": [
               {
                 "productId": 1,
@@ -2670,9 +2681,26 @@ BFF calls Cart's getCart API, then fetches product details from Product Catalogu
                   "shortDescription": "Master advanced techniques...",
                   "price": 999.00,
                   "discountPrice": 799.00,
+                  "priceDetails": { "price": "₹799" },
                   "thumbnailUrl": "/images/course1.png",
                   "difficultyLevel": "INTERMEDIATE",
                   "durationMinutes": 480
+                }
+              },
+              {
+                "productId": 2,
+                "addedAt": "2025-02-19T10:35:00Z",
+                "product": {
+                  "id": 2,
+                  "title": "Professional Skincare Fundamentals",
+                  "slug": "professional-skincare-fundamentals",
+                  "shortDescription": "Learn professional skincare techniques",
+                  "price": 1299.00,
+                  "discountPrice": null,
+                  "priceDetails": { "price": "₹1,299" },
+                  "thumbnailUrl": "/images/course2.png",
+                  "difficultyLevel": "BEGINNER",
+                  "durationMinutes": 360
                 }
               }
             ]
@@ -2685,6 +2713,18 @@ BFF calls Cart's getCart API, then fetches product details from Product Catalogu
 }
 ```
 
+| Details field   | Type   | Description                                                                 |
+| ---------------- | ------ | --------------------------------------------------------------------------- |
+| subtotal         | number | Sum of effective prices (discountPrice if set, else price) for all items. Use for calculations. |
+| subtotalFormatted | string | Formatted subtotal for display (e.g. `₹2,098`). Use for cart total in UI.    |
+| items            | array  | Cart items with product details                                             |
+
+| Product field    | Type   | Description                                                                 |
+| ---------------- | ------ | --------------------------------------------------------------------------- |
+| price            | number | Raw base price (decimal). Use for calculations.                             |
+| discountPrice    | number | Discounted price (nullable). Use for calculations.                         |
+| priceDetails.price | string | Formatted display price (e.g. `₹799`, `₹1,299`). Use for UI display.         |
+
 #### Sample cURL
 
 ```bash
@@ -2694,8 +2734,10 @@ curl -s http://localhost:8080/pages/cart \
 
 #### Notes
 
-- Empty cart returns `items: []`.
-- Product details include fields FE may use for cart display: title, slug, shortDescription, price, discountPrice, thumbnailUrl, difficultyLevel, durationMinutes.
+- Empty cart returns `items: []`, `subtotal: 0`, `subtotalFormatted: "₹0"`.
+- `subtotal` / `subtotalFormatted` give the cart total (sum of effective item prices). GST is applied at verify/checkout.
+- Product details include fields FE may use for cart display: title, slug, shortDescription, price, discountPrice, priceDetails.price (formatted display string), thumbnailUrl, difficultyLevel, durationMinutes.
+- For display, prefer `product.priceDetails.price` (e.g. `₹799`); for calculations use `product.price` / `product.discountPrice`.
 
 ---
 
@@ -3232,6 +3274,34 @@ curl -s -X PUT http://localhost:8080/api/v1/admin/catalogue/setAttributes/1 \
     ]
   }'
 ```
+
+#### Product Attributes Schema (highlights)
+
+The `attributes` JSON stored on each product drives PDP display. To make highlights configurable per product, include a `highlights` array:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `highlights` | array | List of highlight items shown in the course hero section |
+
+Each highlight item:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `icon` | string | Icon name. Supported (case-insensitive, normalized): `Clock`, `BookOpen`, `Award` |
+| `label` | string | Label shown under the icon (e.g. "Duration", "Modules", "Certificate") |
+| `value` | string | Display value (e.g. "8 Weeks", "12 Modules", "Included") |
+
+Example:
+
+```json
+"highlights": [
+  { "icon": "Clock", "label": "Duration", "value": "8 Weeks" },
+  { "icon": "BookOpen", "label": "Modules", "value": "12 Modules" },
+  { "icon": "Award", "label": "Certificate", "value": "Included" }
+]
+```
+
+Use `PUT /api/v1/admin/catalogue/setAttributes/{id}` to set these per product.
 
 ---
 

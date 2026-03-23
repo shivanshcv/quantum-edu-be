@@ -1,6 +1,7 @@
 package com.quantum.edu.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quantum.edu.auth.api.AuthApi;
 import com.quantum.edu.auth.service.JwtService;
 import com.quantum.edu.common.dto.ApiError;
 import com.quantum.edu.common.dto.ApiResponse;
@@ -43,13 +44,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     );
 
     private final JwtService jwtService;
+    private final AuthApi authApi;
     private final ObjectMapper objectMapper;
 
     @Value("${app.jwt.dev-bypass:false}")
     private boolean devBypass;
 
-    public JwtAuthFilter(JwtService jwtService, ObjectMapper objectMapper) {
+    public JwtAuthFilter(JwtService jwtService, AuthApi authApi, ObjectMapper objectMapper) {
         this.jwtService = jwtService;
+        this.authApi = authApi;
         this.objectMapper = objectMapper;
     }
 
@@ -100,7 +103,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             request.setAttribute("isVerified", payload.isVerified());
 
             boolean requiresVerified = VERIFIED_ONLY_PATHS.stream().anyMatch(path -> request.getRequestURI().contains(path));
-            if (requiresVerified && !payload.isVerified()) {
+            boolean isVerified = requiresVerified ? authApi.isVerifiedByUserId(payload.userId()) : payload.isVerified();
+            if (requiresVerified && !isVerified) {
                 response.setStatus(ApiErrorCode.EMAIL_NOT_VERIFIED.getHttpStatus());
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 ApiError error = ApiError.of(ApiErrorCode.EMAIL_NOT_VERIFIED);

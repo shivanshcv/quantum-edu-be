@@ -13,6 +13,7 @@ public class CourseHeroDetails {
     private String badge;
     private String title;
     private String shortDescription;
+    private String longDescription;
     private ImageResponse image;
     private List<HighlightResponse> highlights;
     private PriceDetailsResponse priceDetails;

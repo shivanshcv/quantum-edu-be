@@ -20,4 +20,11 @@ public class AuthApiImpl implements AuthApi {
         return authUserRepository.findById(userId)
                 .map(AuthUser::getEmail);
     }
+
+    @Override
+    public boolean isVerifiedByUserId(Long userId) {
+        return authUserRepository.findById(userId)
+                .map(AuthUser::isVerified)
+                .orElse(false);
+    }
 }

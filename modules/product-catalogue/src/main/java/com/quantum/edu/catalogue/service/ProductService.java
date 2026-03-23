@@ -4,6 +4,7 @@ import com.quantum.edu.catalogue.domain.Assessment;
 import com.quantum.edu.catalogue.domain.Category;
 import com.quantum.edu.catalogue.domain.Lesson;
 import com.quantum.edu.catalogue.domain.Product;
+import com.quantum.edu.catalogue.domain.ProductAttributes;
 import com.quantum.edu.catalogue.domain.ProductContent;
 import com.quantum.edu.catalogue.dto.*;
 import com.quantum.edu.catalogue.repository.AssessmentRepository;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -211,6 +213,7 @@ public class ProductService {
                         .build())
                 .toList();
 
+        ProductAttributes attrs = normalizeHighlightIcons(product.getAttributes());
         return ProductDetailResponse.builder()
                 .id(product.getId())
                 .title(product.getTitle())
@@ -225,12 +228,44 @@ public class ProductService {
                 .durationMinutes(product.getDurationMinutes())
                 .published(product.isPublished())
                 .free(product.isFree())
-                .attributes(product.getAttributes())
+                .attributes(attrs)
                 .categories(categories)
                 .contents(contents)
                 .modules(modules)
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
+                .build();
+    }
+
+    private String normalizeHighlightIcon(String icon) {
+        if (icon == null) return null;
+        return switch (icon.toLowerCase()) {
+            case "clock" -> "Clock";
+            case "bookopen" -> "BookOpen";
+            case "award" -> "Award";
+            default -> icon;
+        };
+    }
+
+    private ProductAttributes normalizeHighlightIcons(ProductAttributes attrs) {
+        if (attrs == null || attrs.getHighlights() == null) {
+            return attrs;
+        }
+        List<ProductAttributes.Highlight> normalized = new ArrayList<>();
+        for (ProductAttributes.Highlight h : attrs.getHighlights()) {
+            normalized.add(ProductAttributes.Highlight.builder()
+                    .icon(normalizeHighlightIcon(h.getIcon()))
+                    .label(h.getLabel())
+                    .value(h.getValue())
+                    .build());
+        }
+        return ProductAttributes.builder()
+                .badge(attrs.getBadge())
+                .highlights(normalized)
+                .learningOutcomes(attrs.getLearningOutcomes())
+                .instructor(attrs.getInstructor())
+                .certification(attrs.getCertification())
+                .outcomeHighlights(attrs.getOutcomeHighlights())
                 .build();
     }
 

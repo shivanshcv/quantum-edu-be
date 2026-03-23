@@ -43,12 +43,22 @@ public class PDPPageService {
         return PageResponse.builder().main(main).build();
     }
 
+    private static String normalizeHighlightIcon(String icon) {
+        if (icon == null) return null;
+        return switch (icon.toLowerCase()) {
+            case "clock" -> "Clock";
+            case "bookopen" -> "BookOpen";
+            case "award" -> "Award";
+            default -> icon;
+        };
+    }
+
     private ComponentResponse buildCourseHeroDetails(ProductDetailResponse product, ProductAttributes attrs) {
         List<HighlightResponse> highlights = List.of();
         if (attrs != null && attrs.getHighlights() != null) {
             highlights = attrs.getHighlights().stream()
                     .map(h -> HighlightResponse.builder()
-                            .icon(h.getIcon())
+                            .icon(normalizeHighlightIcon(h.getIcon()))
                             .label(h.getLabel())
                             .value(h.getValue())
                             .build())
@@ -67,6 +77,7 @@ public class PDPPageService {
                 .badge(badge)
                 .title(product.getTitle())
                 .shortDescription(product.getShortDescription())
+                .longDescription(product.getLongDescription())
                 .image(ImageResponse.builder()
                         .src(product.getThumbnailUrl())
                         .alt(product.getTitle())
@@ -75,7 +86,7 @@ public class PDPPageService {
                 .priceDetails(PriceDetailsResponse.builder().price(priceStr).build())
                 .ctas(List.of(
                         CtaResponse.builder()
-                                .label("Enroll Now")
+                                .label("Add to Cart")
                                 .action("ENROLL")
                                 .variant("primary")
                                 .build()

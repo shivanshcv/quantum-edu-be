@@ -167,28 +167,21 @@ Razorpay sends webhooks to a **public URL**. For local testing, you have two opt
 
 3. Restart the app and run the script below:
 
+Use `scripts/test-webhook.sh`:
+
 ```bash
-#!/bin/bash
-# Save as test-webhook.sh
+# Local (default)
+export RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
+./scripts/test-webhook.sh order_xxxxxxxxxxxx
 
-WEBHOOK_SECRET="${RAZORPAY_WEBHOOK_SECRET:?Set RAZORPAY_WEBHOOK_SECRET}"
-ORDER_ID="${1:?Usage: ./test-webhook.sh order_xxx}"
+# Staging (Cloudflare tunnel)
+./scripts/test-webhook.sh order_xxxxxxxxxxxx staging
 
-PAYLOAD="{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"id\":\"pay_test123\",\"order_id\":\"$ORDER_ID\",\"status\":\"captured\",\"amount\":94282,\"currency\":\"INR\"}}}}"
-SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
-
-echo "Calling webhook with order_id=$ORDER_ID"
-curl -v -X POST http://localhost:8080/api/v1/cart/webhook/razorpay \
-  -H "Content-Type: application/json" \
-  -H "X-Razorpay-Signature: $SIGNATURE" \
-  -d "$PAYLOAD"
+# Custom URL
+./scripts/test-webhook.sh order_xxxxxxxxxxxx https://your-tunnel.trycloudflare.com
 ```
 
-Run:
-```bash
-chmod +x test-webhook.sh
-./test-webhook.sh order_xxxxxxxxxxxx
-```
+Staging uses `https://lucia-dream-bids-extensions.trycloudflare.com`. Ensure Razorpay Dashboard webhook URL matches.
 
 #### Option B: Use ngrok/zrok for Real Webhook Delivery
 
@@ -269,7 +262,8 @@ echo "Razorpay Order ID: $ORDER_ID"
 echo ""
 echo "5. To test webhook, run:"
 echo "   export RAZORPAY_WEBHOOK_SECRET=<your_secret>"
-echo "   ./test-webhook.sh $ORDER_ID"
+echo "   ./scripts/test-webhook.sh $ORDER_ID              # local"
+echo "   ./scripts/test-webhook.sh $ORDER_ID staging     # staging"
 ```
 
 ---
