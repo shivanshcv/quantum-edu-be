@@ -28,5 +28,7 @@ WORKDIR /app
 COPY --from=build /app/app/target/quantum-edu-be-app-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
-# SPRING_PROFILES_ACTIVE=staging set via Render env vars
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# SPRING_PROFILES_ACTIVE=staging set via deploy env vars
+# stdbuf forces line-buffered stdout so docker logs -f shows real-time output (Java buffers when stdout is a pipe)
+# Fallback to plain java if stdbuf is unavailable (e.g. minimal base images)
+ENTRYPOINT ["/bin/sh", "-c", "if command -v stdbuf >/dev/null 2>&1; then exec stdbuf -oL -eL java -jar app.jar; else exec java -jar app.jar; fi"]

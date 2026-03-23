@@ -13,6 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -20,24 +22,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiException(ApiException ex) {
+        log.error("API error {}: {} (HTTP {})", ex.getErrorCode().getCode(), ex.getErrorCode().getMessage(),
+                ex.getErrorCode().getHttpStatus());
         return buildResponse(ex.getErrorCode());
     }
 
     @ExceptionHandler(InternalException.class)
     public ResponseEntity<ApiResponse<Void>> handleInternalException(InternalException ex) {
-        log.warn("Internal error [{}]: {}", ex.getErrorCode().getCode(), ex.getMessage());
         ApiErrorCode apiErrorCode = ex.getErrorCode().getMappedApiErrorCode();
+        log.error("Internal error [{}]: {} -> {} (HTTP {})", ex.getErrorCode().getCode(), ex.getMessage(),
+                apiErrorCode.getMessage(), apiErrorCode.getHttpStatus());
         return buildResponse(apiErrorCode);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+        String fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .map(e -> e.getField() + "=" + e.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        log.error("Validation failed (QE_VAL_001): {}", fieldErrors);
         return buildResponse(ApiErrorCode.VALIDATION_FAILED);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleMessageNotReadable(HttpMessageNotReadableException ex) {
-        log.debug("Invalid request body", ex);
+        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+        log.error("Invalid request body: {}", cause.getMessage());
         return buildResponse(ApiErrorCode.INVALID_REQUEST_BODY);
     }
 

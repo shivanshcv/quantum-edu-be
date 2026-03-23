@@ -2849,8 +2849,10 @@ Returns the settings page structure with profile, security, and billing sections
             "profileSection": {
               "title": "Profile",
               "fields": [
-                { "id": "name", "label": "Full name", "type": "text", "placeholder": "Jane Doe", "required": true, "readOnly": false },
-                { "id": "email", "label": "Email", "type": "email", "placeholder": "jane@example.com", "required": true, "readOnly": true }
+                { "id": "firstName", "label": "First name", "type": "text", "placeholder": "Jane", "required": true, "readOnly": false },
+                { "id": "lastName", "label": "Last name", "type": "text", "placeholder": "Doe", "required": false, "readOnly": false },
+                { "id": "email", "label": "Email", "type": "email", "placeholder": "jane@example.com", "required": true, "readOnly": true },
+                { "id": "phone", "label": "Phone", "type": "text", "placeholder": "+919876543210", "required": false, "readOnly": false }
               ],
               "submitLabel": "Save changes"
             },
@@ -2872,8 +2874,10 @@ Returns the settings page structure with profile, security, and billing sections
               "submitLabel": "Save changes"
             },
             "values": {
-              "name": "Jane Doe",
+              "firstName": "Jane",
+              "lastName": "Doe",
               "email": "jane@example.com",
+              "phone": "+919876543210",
               "billingName": "Jane Doe",
               "billingAddressLine1": "123 Main St",
               "billingAddressLine2": "",

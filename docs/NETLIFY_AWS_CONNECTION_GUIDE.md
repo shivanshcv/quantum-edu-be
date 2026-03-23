@@ -172,6 +172,9 @@ sudo docker run -d \
 # Verify
 sudo docker ps
 sudo docker logs quantum-edu-be --tail 30
+
+# Follow logs in real time (stream as requests come in)
+sudo docker logs quantum-edu-be -f
 ```
 
 ### 5.3 Multiple Origins (Netlify + Custom Domain)
@@ -234,7 +237,7 @@ Or: Push a commit to your connected Git branch — Netlify will auto-deploy.
 ### 8.1 Backend Health Check
 
 ```bash
-curl http://52.66.209.243:8080/health
+curl http://65.0.74.204:8080/health
 # Or: curl http://52.66.209.243:8080/api/v1/bff/home
 ```
 

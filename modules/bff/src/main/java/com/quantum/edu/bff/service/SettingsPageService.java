@@ -16,7 +16,9 @@ public class SettingsPageService {
 
     private static final List<SettingsDetails.SettingsField> PROFILE_FIELDS = List.of(
             SettingsDetails.SettingsField.builder()
-                    .id("name").label("Full name").type("text").placeholder("Jane Doe").required(true).readOnly(false).build(),
+                    .id("firstName").label("First name").type("text").placeholder("Jane").required(true).readOnly(false).build(),
+            SettingsDetails.SettingsField.builder()
+                    .id("lastName").label("Last name").type("text").placeholder("Doe").required(false).readOnly(false).build(),
             SettingsDetails.SettingsField.builder()
                     .id("email").label("Email").type("email").placeholder("jane@example.com").required(true).readOnly(true).build(),
             SettingsDetails.SettingsField.builder()
@@ -62,15 +64,16 @@ public class SettingsPageService {
         UserProfile profile = profileOpt.orElse(null);
         String email = authApi.getEmailByUserId(userId).orElse(null);
 
-        String name = profile != null ? buildProfileName(profile) : "";
+        String firstName = profile != null && profile.getFirstName() != null ? profile.getFirstName() : "";
+        String lastName = profile != null && profile.getLastName() != null ? profile.getLastName() : "";
         String phone = profile != null && profile.getPhone() != null ? profile.getPhone() : "";
         String billingName = profile != null ? profile.getBillingName() : "";
 
         Map<String, String> values = new HashMap<>();
-        values.put("name", name);
+        values.put("firstName", firstName);
+        values.put("lastName", lastName);
         values.put("email", email != null ? email : "");
         values.put("phone", phone);
-        values.put("mobile", phone);  // alias for FE compatibility
         values.put("billingName", billingName);
         values.put("billingAddressLine1", profile != null && profile.getAddressLine1() != null ? profile.getAddressLine1() : "");
         values.put("billingAddressLine2", profile != null && profile.getAddressLine2() != null ? profile.getAddressLine2() : "");
@@ -116,10 +119,4 @@ public class SettingsPageService {
                 .build();
     }
 
-    private static String buildProfileName(UserProfile profile) {
-        if (profile.getLastName() != null && !profile.getLastName().isBlank()) {
-            return profile.getFirstName() + " " + profile.getLastName();
-        }
-        return profile.getFirstName();
-    }
 }

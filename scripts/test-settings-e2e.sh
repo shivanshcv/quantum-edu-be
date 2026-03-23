@@ -110,12 +110,12 @@ echo "   OK - Profile updated"
 echo ""
 echo "5. GET /pages/settings (verify profile)"
 SETTINGS2_RESP=$(curl -s "$BASE_URL/pages/settings" -H "Authorization: Bearer $USER_TOKEN")
-if echo "$SETTINGS2_RESP" | grep -q '"name":"Dr. Alex Carter"'; then
-  echo "   OK - name updated to Dr. Alex Carter"
-elif echo "$SETTINGS2_RESP" | grep -q 'Dr. Alex Carter'; then
-  echo "   OK - name contains Dr. Alex Carter"
+if echo "$SETTINGS2_RESP" | grep -q '"firstName":"Dr. Alex"' && echo "$SETTINGS2_RESP" | grep -q '"lastName":"Carter"'; then
+  echo "   OK - firstName/lastName updated"
+elif echo "$SETTINGS2_RESP" | grep -q 'Dr. Alex'; then
+  echo "   OK - profile updated"
 else
-  echo "   Note: Verify name in values - $SETTINGS2_RESP" | head -c 200
+  echo "   Note: Verify firstName/lastName in values - $SETTINGS2_RESP" | head -c 200
 fi
 if echo "$SETTINGS2_RESP" | grep -q '"phone":"+919876543210"'; then
   echo "   OK - phone updated"
