@@ -1,5 +1,7 @@
 # AWS Deployment Guide — Staging on Free Credits
 
+**Production:** see **[`AWS_PRODUCTION_GUIDE.md`](./AWS_PRODUCTION_GUIDE.md)** (single doc: **`deploy.prod.sh`**, **`deploy.prod.env`**, RDS, EC2, nginx, Certbot, Amplify).
+
 This guide helps you deploy `quantum-edu-be` to AWS for **staging** using your new account's free credits. It covers tasks to earn credits, time estimates, and a step-by-step deployment path.
 
 **Architecture:** EC2 (Ubuntu 22.04) + RDS MySQL (private) + ECR. Media on **Cloudflare R2** (zero egress). Manual push workflow for staging.
