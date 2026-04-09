@@ -15,7 +15,6 @@ public class VerifyCartItemDto {
     private BigDecimal price;
     private BigDecimal discountPrice;
     private BigDecimal finalPrice;
-    private BigDecimal gstAmount;
     private int quantity;
     private boolean free;
 }

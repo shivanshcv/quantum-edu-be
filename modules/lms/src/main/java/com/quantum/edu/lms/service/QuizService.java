@@ -6,15 +6,21 @@ import com.quantum.edu.catalogue.dto.QuizAnswerInput;
 import com.quantum.edu.catalogue.dto.QuizValidationResult;
 import com.quantum.edu.common.exception.ApiErrorCode;
 import com.quantum.edu.common.exception.ApiException;
+import com.quantum.edu.lms.LmsCourseProgression;
 import com.quantum.edu.lms.domain.UserAssessmentResult;
 import com.quantum.edu.lms.dto.QuizValidationResponse;
+import com.quantum.edu.lms.domain.UserLessonProgress;
 import com.quantum.edu.lms.repository.UserAssessmentResultRepository;
+import com.quantum.edu.lms.repository.UserLessonProgressRepository;
 import com.quantum.edu.ownership.api.OwnershipApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuizService {
@@ -22,13 +28,16 @@ public class QuizService {
     private final ProductCatalogueApi productCatalogueApi;
     private final OwnershipApi ownershipApi;
     private final UserAssessmentResultRepository assessmentResultRepository;
+    private final UserLessonProgressRepository lessonProgressRepository;
 
     public QuizService(ProductCatalogueApi productCatalogueApi,
                       OwnershipApi ownershipApi,
-                      UserAssessmentResultRepository assessmentResultRepository) {
+                      UserAssessmentResultRepository assessmentResultRepository,
+                      UserLessonProgressRepository lessonProgressRepository) {
         this.productCatalogueApi = productCatalogueApi;
         this.ownershipApi = ownershipApi;
         this.assessmentResultRepository = assessmentResultRepository;
+        this.lessonProgressRepository = lessonProgressRepository;
     }
 
     @Transactional
@@ -45,6 +54,18 @@ public class QuizService {
                 .anyMatch(c -> c.getId().equals(contentId) && "ASSESSMENT".equals(c.getContentType()));
         if (!isAssessment) {
             throw new ApiException(ApiErrorCode.LMS_CONTENT_NOT_FOUND);
+        }
+
+        List<Long> allContentIdList = new ArrayList<>(product.getContents().stream()
+                .map(ProductDetailResponse.ContentSummary::getId)
+                .toList());
+        Set<Long> completedContentIds = allContentIdList.isEmpty()
+                ? Set.of()
+                : lessonProgressRepository.findByUserIdAndProductContentIdIn(userId, allContentIdList).stream()
+                        .map(UserLessonProgress::getProductContentId)
+                        .collect(Collectors.toSet());
+        if (LmsCourseProgression.isContentLocked(product, completedContentIds, contentId)) {
+            throw new ApiException(ApiErrorCode.LMS_CONTENT_LOCKED);
         }
 
         QuizValidationResult result = productCatalogueApi.validateQuizAnswers(contentId, answers)

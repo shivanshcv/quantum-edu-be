@@ -8,17 +8,21 @@ import com.quantum.edu.catalogue.dto.QuizValidationResult;
 import com.quantum.edu.catalogue.repository.AssessmentRepository;
 import com.quantum.edu.common.exception.InternalErrorCode;
 import com.quantum.edu.common.exception.InternalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class QuizValidationService {
+
+    private static final Logger log = LoggerFactory.getLogger(QuizValidationService.class);
 
     private final AssessmentRepository assessmentRepository;
 
@@ -28,26 +32,24 @@ public class QuizValidationService {
 
     @Transactional(readOnly = true)
     public Optional<QuizValidationResult> validateAnswers(Long productContentId, List<QuizAnswerInput> answers) {
-        Assessment assessment = assessmentRepository.findByProductContentId(productContentId)
+        // Same fetch path as player payload (questions eager); options load in-session when scored.
+        Assessment assessment = assessmentRepository.findByProductContentIdWithQuestionsAndOptions(productContentId)
                 .orElseThrow(() -> new InternalException(InternalErrorCode.ASSESSMENT_NOT_FOUND));
-
-        Map<Long, Long> correctOptionByQuestion = new HashMap<>();
-        for (AssessmentQuestion q : assessment.getQuestions()) {
-            Optional<Long> correctId = q.getOptions().stream()
-                    .filter(AssessmentOption::isCorrect)
-                    .map(AssessmentOption::getId)
-                    .findFirst();
-            correctId.ifPresent(id -> correctOptionByQuestion.put(q.getId(), id));
-        }
 
         Map<Long, Long> userAnswers = answers.stream()
                 .collect(Collectors.toMap(QuizAnswerInput::getQuestionId, QuizAnswerInput::getOptionId, (a, b) -> b));
 
         List<QuizValidationResult.QuestionResult> results = assessment.getQuestions().stream()
                 .map(q -> {
+                    boolean hasCorrectKey = q.getOptions().stream().anyMatch(AssessmentOption::isCorrect);
+                    if (!hasCorrectKey) {
+                        log.warn("Quiz question id={} has no option with is_correct=1; submissions will always count as wrong. Fix data.",
+                                q.getId());
+                    }
                     Long userOption = userAnswers.get(q.getId());
-                    Long correctOption = correctOptionByQuestion.get(q.getId());
-                    boolean correct = correctOption != null && correctOption.equals(userOption);
+                    boolean correct = userOption != null
+                            && q.getOptions().stream()
+                                    .anyMatch(o -> o.isCorrect() && Objects.equals(o.getId(), userOption));
                     return QuizValidationResult.QuestionResult.builder()
                             .questionId(q.getId())
                             .correct(correct)

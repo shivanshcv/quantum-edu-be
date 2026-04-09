@@ -130,9 +130,12 @@ public class LmsService {
             Set<Long> completedContentIds,
             boolean moduleLocked) {
         List<LmsPlayerData.LessonData> lessons = new ArrayList<>();
-        for (ProductDetailResponse.ContentSummary c : contents) {
+        for (int i = 0; i < contents.size(); i++) {
+            ProductDetailResponse.ContentSummary c = contents.get(i);
             String status;
             if (moduleLocked) {
+                status = "locked";
+            } else if (sequentiallyLockedWithinModule(contents, i, completedContentIds)) {
                 status = "locked";
             } else if (completedContentIds.contains(c.getId())) {
                 status = "completed";
@@ -161,6 +164,18 @@ public class LmsService {
                     .build());
         }
         return lessons;
+    }
+
+    private boolean sequentiallyLockedWithinModule(
+            List<ProductDetailResponse.ContentSummary> orderedContents,
+            int index,
+            Set<Long> completedContentIds) {
+        for (int j = 0; j < index; j++) {
+            if (!completedContentIds.contains(orderedContents.get(j).getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private LmsPlayerData.AssessmentData toAssessmentData(ProductDetailResponse.AssessmentSummary a) {

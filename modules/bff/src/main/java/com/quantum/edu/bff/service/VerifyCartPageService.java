@@ -1,6 +1,7 @@
 package com.quantum.edu.bff.service;
 
 import com.quantum.edu.auth.api.AuthApi;
+import com.quantum.edu.bff.constants.VerifyCartConstants;
 import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.cart.api.CartApi;
 import com.quantum.edu.cart.dto.VerifyItemRequest;
@@ -114,7 +115,7 @@ public class VerifyCartPageService {
                 .courseListTitle("Course List")
                 .orderSummaryTitle("Order Summary")
                 .subtotalLabel("Subtotal")
-                .taxesLabel("Taxes (if applicable)")
+                .taxesLabel(VerifyCartConstants.PRICES_INCLUSIVE_OF_TAXES_LABEL)
                 .totalLabel("Final Payable Total")
                 .payNowLabel("Pay now")
                 .emptyStateMessage("No courses in your cart yet.")
@@ -122,7 +123,6 @@ public class VerifyCartPageService {
                 .errorMessage("Unable to load checkout details. Please try again.")
                 .items(List.of())
                 .subtotal(currencyFormatter.formatWithCode(BigDecimal.ZERO))
-                .taxes(currencyFormatter.formatWithCode(BigDecimal.ZERO))
                 .total(currencyFormatter.formatWithCode(BigDecimal.ZERO))
                 .paymentRequired(false)
                 .build();
@@ -141,7 +141,6 @@ public class VerifyCartPageService {
                         .price(item.getPrice())
                         .discountPrice(item.getDiscountPrice())
                         .finalPrice(item.getFinalPrice())
-                        .gstAmount(item.getGstAmount())
                         .quantity(item.getQuantity())
                         .free(item.isFree())
                         .build());
@@ -149,7 +148,6 @@ public class VerifyCartPageService {
         }
 
         String subtotal = currencyFormatter.formatWithCode(verifyResponse.getSubtotal());
-        String taxes = currencyFormatter.formatWithCode(verifyResponse.getGstAmount());
         String total = currencyFormatter.formatWithCode(verifyResponse.getFinalAmount());
 
         VerifyCartDetails details = VerifyCartDetails.builder()
@@ -161,7 +159,7 @@ public class VerifyCartPageService {
                 .courseListTitle("Course List")
                 .orderSummaryTitle("Order Summary")
                 .subtotalLabel("Subtotal")
-                .taxesLabel("Taxes (if applicable)")
+                .taxesLabel(VerifyCartConstants.PRICES_INCLUSIVE_OF_TAXES_LABEL)
                 .totalLabel("Final Payable Total")
                 .payNowLabel("Pay now")
                 .emptyStateMessage("No courses in your cart yet.")
@@ -169,7 +167,6 @@ public class VerifyCartPageService {
                 .errorMessage("Unable to load checkout details. Please try again.")
                 .items(items)
                 .subtotal(subtotal)
-                .taxes(taxes)
                 .total(total)
                 .paymentRequired(verifyResponse.isPaymentRequired())
                 .build();

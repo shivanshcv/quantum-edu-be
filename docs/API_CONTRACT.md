@@ -93,10 +93,10 @@ All monetary amounts across the application use a single configured currency (de
 | Context | Format | Example |
 | ------- | ------ | ------- |
 | **Display (Home, Courses, PDP, Cart)** | Symbol + amount with grouping | `₹1,999` |
-| **Verify cart (subtotal, taxes, total)** | Code + amount | `INR 799`, `INR 144`, `INR 943` |
+| **Verify cart (subtotal, total)** | Code + amount | `INR 799`, `INR 799` |
 | **Checkout response** | `currency` field + `amount` (paise for Razorpay) | `currency: "INR"`, `amount: 235882` |
 
-**Requests:** Amount fields (`price`, `finalPrice`, `gstAmount`, etc.) are plain numbers. No currency field in requests; backend assumes configured currency.
+**Requests:** Amount fields (`price`, `finalPrice`, etc.) are plain numbers. No currency field in requests; backend assumes configured currency. Listed prices are **tax-inclusive**; the backend does not compute or add tax.
 
 **Responses:** Verify and Checkout include `currency` when payment is required. All formatted price strings use the configured symbol/code.
 
@@ -1757,7 +1757,7 @@ curl -s http://localhost:8080/api/v1/cart/getCart \
 **Endpoint:** `POST /api/v1/cart/verifyCart`  
 **Auth Required:** Yes
 
-BFF fetches cart, gets product details from Product Catalogue, then calls this with items. Cart validates ownership and computes GST.
+BFF fetches cart, gets product details from Product Catalogue, then calls this with items. Cart validates ownership and computes line totals (tax-inclusive; no separate tax).
 
 #### Request
 
@@ -1769,7 +1769,7 @@ BFF fetches cart, gets product details from Product Catalogue, then calls this w
 | items[].title         | string  | Yes      | Product title                        |
 | items[].price         | decimal | Yes      | Base price                           |
 | items[].discountPrice | decimal | No       | Discounted price; if null, use price |
-| billingGstNumber      | string  | No       | Optional; affects GST calculation    |
+| billingGstNumber      | string  | No       | Optional; stored for profile / billing only |
 
 
 #### Request Body
@@ -1801,7 +1801,6 @@ BFF fetches cart, gets product details from Product Catalogue, then calls this w
         "price": 999.00,
         "discountPrice": 799.00,
         "finalPrice": 799.00,
-        "gstAmount": 143.82,
         "quantity": 1
       }
     ],
@@ -1809,8 +1808,7 @@ BFF fetches cart, gets product details from Product Catalogue, then calls this w
       { "productId": 2, "title": "Basic Skincare", "reason": "ALREADY_OWNED" }
     ],
     "subtotal": 799.00,
-    "gstAmount": 143.82,
-    "finalAmount": 942.82,
+    "finalAmount": 799.00,
     "currency": "INR"
   }
 }
@@ -1852,8 +1850,7 @@ BFF fetches product details and billing from User Profile, then calls this. Retu
 | items[].productId           | long    | Yes      | Product ID                                        |
 | items[].price               | decimal | Yes      | Base price                                        |
 | items[].discountPrice       | decimal | No       | Discount price                                    |
-| items[].finalPrice          | decimal | Yes      | Final price per item                              |
-| items[].gstAmount           | decimal | Yes      | GST amount per item                               |
+| items[].finalPrice          | decimal | Yes      | Final price per item (tax-inclusive)              |
 | billing                     | object  | Yes      | Billing snapshot (BFF prefills from User Profile) |
 | billing.billingName         | string  | Yes      | Billing name                                      |
 | billing.billingAddressLine1 | string  | Yes      | Address line 1                                    |
@@ -1874,8 +1871,7 @@ BFF fetches product details and billing from User Profile, then calls this. Retu
       "productId": 1,
       "price": 999.00,
       "discountPrice": 799.00,
-      "finalPrice": 799.00,
-      "gstAmount": 143.82
+      "finalPrice": 799.00
     }
   ],
   "billing": {
@@ -1898,7 +1894,7 @@ BFF fetches product details and billing from User Profile, then calls this. Retu
   "success": true,
   "response": {
     "razorpayOrderId": "order_xxx",
-    "amount": 94282,
+    "amount": 79900,
     "currency": "INR",
     "keyId": "rzp_test_xxx",
     "orderIds": [101, 102]
@@ -1920,8 +1916,7 @@ curl -s -X POST http://localhost:8080/api/v1/cart/checkout \
         "productId": 1,
         "price": 999.00,
         "discountPrice": 799.00,
-        "finalPrice": 799.00,
-        "gstAmount": 143.82
+        "finalPrice": 799.00
       }
     ],
     "billing": {
@@ -2180,7 +2175,7 @@ Returns the home page structure with components (HERO_SECTION, CARD_GRID). The h
               { "id": "f3", "title": "Next cohort", "subtitle": "April 2026", "position": "bottom-left" }
             ],
             "ctas": [
-              { "label": "Enquire via WhatsApp", "url": "https://wa.me/1234567890", "variant": "primary", "type": "button" },
+              { "label": "Enquire via WhatsApp", "url": "https://wa.me/918383857754?text=Hi%20I%20am%20Interested%20To%20Know%20More%20About%20Quantum%20Education%20Courses", "variant": "primary", "type": "button" },
               { "label": "View All Courses", "url": "/courses", "variant": "secondary", "type": "button" }
             ]
           }
@@ -2735,7 +2730,7 @@ curl -s http://localhost:8080/pages/cart \
 #### Notes
 
 - Empty cart returns `items: []`, `subtotal: 0`, `subtotalFormatted: "₹0"`.
-- `subtotal` / `subtotalFormatted` give the cart total (sum of effective item prices). GST is applied at verify/checkout.
+- `subtotal` / `subtotalFormatted` give the cart total (sum of effective item prices). Verify/checkout use the same tax-inclusive amounts (no tax line).
 - Product details include fields FE may use for cart display: title, slug, shortDescription, price, discountPrice, priceDetails.price (formatted display string), thumbnailUrl, difficultyLevel, durationMinutes.
 - For display, prefer `product.priceDetails.price` (e.g. `₹799`); for calculations use `product.price` / `product.discountPrice`.
 
@@ -2816,7 +2811,7 @@ BFF fetches product details from Product Catalogue and computes the expected fin
             "courseListTitle": "Course List",
             "orderSummaryTitle": "Order Summary",
             "subtotalLabel": "Subtotal",
-            "taxesLabel": "Taxes (if applicable)",
+            "taxesLabel": "Prices are inclusive of taxes",
             "totalLabel": "Final Payable Total",
             "payNowLabel": "Pay now",
             "emptyStateMessage": "No courses in your cart yet.",
@@ -2829,13 +2824,11 @@ BFF fetches product details from Product Catalogue and computes the expected fin
                 "price": 999.00,
                 "discountPrice": 799.00,
                 "finalPrice": 799.00,
-                "gstAmount": 143.82,
                 "quantity": 1
               }
             ],
             "subtotal": "INR 799",
-            "taxes": "INR 144",
-            "total": "INR 943"
+            "total": "INR 799"
           }
         }
       ],
@@ -2955,15 +2948,15 @@ curl -s http://localhost:8080/pages/settings \
 **Endpoint:** `POST /api/v1/bff/checkout`  
 **Auth Required:** Yes (verified email required)
 
-BFF orchestrates checkout. If `billingInfoPresent` is `false`, BFF saves billing to User Profile first, then calls Cart checkout. If `billingInfoPresent` is `true`, BFF uses billing from request (FE sends back what verify returned) and proceeds directly to Cart checkout.
+BFF orchestrates checkout. If `billingInfoPresent` is `false`, BFF saves billing to User Profile first, then calls Cart checkout. If `billingInfoPresent` is `true`, BFF uses billing from the request body when provided; otherwise it loads billing from the user profile (so the client may omit `billing` when verify already indicated saved billing). Incomplete profile billing returns `QE_BFF_002`.
 
 #### Request
 
 | Field | Type | Required | Description |
 | ----- | ---- | -------- | ----------- |
 | billingInfoPresent | boolean | Yes | `true` if billing was in verify response; `false` if FE collected it |
-| items | array | Yes | Order line items (productId, price, discountPrice, finalPrice, gstAmount) |
-| billing | object | Yes | Billing snapshot (from verify when present, or from FE form when not) |
+| items | array | Yes | Order line items (productId, price, discountPrice, finalPrice; tax-inclusive) |
+| billing | object | If `billingInfoPresent` is `false` | Required when `billingInfoPresent` is `false`. When `true`, optional — omitted means load from user profile. |
 
 #### Request Body
 
@@ -2975,8 +2968,7 @@ BFF orchestrates checkout. If `billingInfoPresent` is `false`, BFF saves billing
       "productId": 1,
       "price": 999.00,
       "discountPrice": 799.00,
-      "finalPrice": 799.00,
-      "gstAmount": 143.82
+      "finalPrice": 799.00
     }
   ],
   "billing": {
@@ -3089,7 +3081,8 @@ Returns course structure and progress for the LMS player. User must own the cour
 
 **Lesson id:** Product content ID (numeric). Use this value as `contentId` in `POST /lms/lessons/{contentId}/complete` and `POST /lms/lessons/{contentId}/validate-quiz`.  
 **Lesson status:** `completed`, `in_progress`, `not_started`, `locked`  
-**Module isLocked:** `true` when previous module has incomplete lessons  
+**Module isLocked:** `true` when the prior course segment (orphan/introduction block or previous module) is not fully completed.  
+**Sequential lessons:** Inside an unlocked module (and inside the orphan/introduction block), items follow `order_index`: only the first incomplete item is reachable; later items are `locked` until every prior item in that segment is `completed`.
 **moduleType:** `LESSON` or `QUIZ` (assessment)  
 **type:** `VIDEO`, `PDF`, or `PPT` for lessons; `null` for quiz
 **url:** Single media URL. Backend populates based on type: video_url for VIDEO, pdf_url for PDF, ppt_url for PPT. FE renders accordingly (video player, PDF viewer, or PPT slideshow). Quiz has `null`.
@@ -3154,6 +3147,7 @@ Validates quiz answers for an assessment (QUIZ) lesson. Returns pass/fail and pe
 | ---- | ---- | ----------- |
 | QE_LMS_001 | 403 | Course access denied |
 | QE_LMS_002 | 404 | Content not found or not an assessment |
+| QE_LMS_004 | 403 | Content not yet available (complete previous lessons in order) |
 
 #### POST /lms/lessons/{contentId}/complete
 
@@ -3183,6 +3177,7 @@ Marks a lesson or quiz as complete for the authenticated user. User must own the
 | QE_LMS_001 | 403 | Course access denied |
 | QE_LMS_002 | 404 | Lesson not found |
 | QE_LMS_003 | 400 | Quiz not passed (for QUIZ lessons; must call validate-quiz first and pass) |
+| QE_LMS_004 | 403 | Content not yet available (complete previous lessons in order) |
 
 **Sample cURL**
 
@@ -3350,10 +3345,11 @@ Use `PUT /api/v1/admin/catalogue/setAttributes/{id}` to set these per product.
 ### LMS
 
 
-| Code       | HTTP | Message              | API(s)           |
-| ---------- | ---- | -------------------- | ---------------- |
-| QE_LMS_001 | 403  | Course access denied | Player, Complete |
-| QE_LMS_002 | 404  | Lesson not found     | Mark Complete    |
+| Code       | HTTP | Message                                       | API(s)                    |
+| ---------- | ---- | --------------------------------------------- | ------------------------- |
+| QE_LMS_001 | 403  | Course access denied                          | Player, Complete, Quiz    |
+| QE_LMS_002 | 404  | Lesson not found                              | Mark Complete             |
+| QE_LMS_004 | 403  | Complete previous lessons to access this item | Validate quiz, Complete   |
 
 
 ### Product Catalogue

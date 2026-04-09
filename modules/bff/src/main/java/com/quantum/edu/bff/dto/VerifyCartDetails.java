@@ -26,7 +26,6 @@ public class VerifyCartDetails {
     private String errorMessage;
     private List<VerifyCartItemDto> items;
     private String subtotal;
-    private String taxes;
     private String total;
     private boolean paymentRequired;
 }

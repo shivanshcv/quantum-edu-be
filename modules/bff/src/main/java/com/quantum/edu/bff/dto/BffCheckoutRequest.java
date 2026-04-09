@@ -3,8 +3,8 @@ package com.quantum.edu.bff.dto;
 import com.quantum.edu.cart.dto.BillingRequest;
 import com.quantum.edu.cart.dto.CheckoutItemRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -25,7 +25,15 @@ public class BffCheckoutRequest {
     @Valid
     private List<CheckoutItemRequest> items;
 
-    @NotNull
+    /**
+     * Required when {@code billingInfoPresent} is false (user entered billing on checkout form).
+     * When {@code billingInfoPresent} is true, may be omitted — BFF loads billing from the user profile.
+     */
     @Valid
     private BillingRequest billing;
+
+    @AssertTrue(message = "billing is required when billingInfoPresent is false")
+    public boolean isBillingPresentWhenNeeded() {
+        return billingInfoPresent || billing != null;
+    }
 }

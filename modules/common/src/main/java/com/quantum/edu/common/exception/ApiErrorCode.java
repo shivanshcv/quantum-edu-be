@@ -35,6 +35,8 @@ public enum ApiErrorCode {
 
     // BFF
     PRICE_MISMATCH("QE_BFF_001", "Product price does not match. Please refresh and try again.", 400),
+    BFF_BILLING_INCOMPLETE_ON_PROFILE("QE_BFF_002",
+            "Saved billing is missing or incomplete. Update billing in your profile, or send billing with checkout.", 400),
 
     // Cart
     CART_EMPTY("QE_CART_004", "Cart is empty", 400),
@@ -52,7 +54,8 @@ public enum ApiErrorCode {
     // LMS
     LMS_COURSE_ACCESS_DENIED("QE_LMS_001", "Course access denied", 403),
     LMS_CONTENT_NOT_FOUND("QE_LMS_002", "Lesson not found", 404),
-    LMS_QUIZ_NOT_PASSED("QE_LMS_003", "You must pass the quiz before completing this lesson", 400);
+    LMS_QUIZ_NOT_PASSED("QE_LMS_003", "You must pass the quiz before completing this lesson", 400),
+    LMS_CONTENT_LOCKED("QE_LMS_004", "Complete previous lessons to access this content.", 403);
 
     private final String code;
     private final String message;

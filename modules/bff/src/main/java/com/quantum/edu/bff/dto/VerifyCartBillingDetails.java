@@ -13,7 +13,8 @@ public class VerifyCartBillingDetails {
     private boolean isAvailable;
     private String title;
     private BillingSection section;
-    private BillingData billing;  // Present when isAvailable=true, FE sends back in checkout
+    /** Present when isAvailable=true. FE may omit billing on checkout; BFF loads from profile. */
+    private BillingData billing;
 
     @Getter
     @Setter

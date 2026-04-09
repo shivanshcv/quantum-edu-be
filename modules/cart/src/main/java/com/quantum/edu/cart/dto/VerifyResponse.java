@@ -18,7 +18,6 @@ public class VerifyResponse {
     private List<VerifyItemResponse> items;
     private List<AlreadyOwnedItemResponse> alreadyOwned;
     private BigDecimal subtotal;
-    private BigDecimal gstAmount;
     private BigDecimal finalAmount;
     private String currency;
     private boolean paymentRequired;

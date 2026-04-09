@@ -89,7 +89,7 @@ mysql -h <AIVEN_HOST> -P <AIVEN_PORT> -u <AIVEN_USER> -p<AIVEN_PASSWORD> <AIVEN_
 | `JWT_SECRET` | No | `quantum-edu-jwt-secret-key-min-256-bits-for-hs256-algorithm` | Override for prod |
 | `APP_CORS_ORIGINS` | No | `https://quantum-education.netlify.app` | Your staging FE URL |
 | `VERIFICATION_BASE_URL` | No | `https://quantum-education.netlify.app/verify-email` | FE verify-email URL |
-| `RAZORPAY_KEY_ID` | No | `rzp_test_SLepofnigNDLcv` | Razorpay test key |
+| `RAZORPAY_KEY_ID` | No | `rzp_test_Sacsb0DFaG7tCx` | Razorpay test key |
 | `RAZORPAY_KEY_SECRET` | No | *(set in code)* | Razorpay test secret – override (Secret) |
 | `RAZORPAY_WEBHOOK_SECRET` | No | `shivansh1234` | From Razorpay webhook config |
 | `EMAIL_FROM` | No | `noreply@quantumedu.com` | Sender for verification emails |
@@ -107,7 +107,7 @@ MYSQL_PASSWORD=<from Aiven – set as Secret>
 JWT_SECRET=quantum-edu-jwt-secret-key-min-256-bits-for-hs256-algorithm
 APP_CORS_ORIGINS=https://quantum-education.netlify.app
 VERIFICATION_BASE_URL=https://quantum-education.netlify.app/verify-email
-RAZORPAY_KEY_ID=rzp_test_SLepofnigNDLcv
+RAZORPAY_KEY_ID=rzp_test_Sacsb0DFaG7tCx
 RAZORPAY_KEY_SECRET=<set as Secret>
 RAZORPAY_WEBHOOK_SECRET=shivansh1234
 EMAIL_FROM=noreply@quantumedu.com

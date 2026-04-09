@@ -98,7 +98,7 @@ WHERE pc.product_id = 1 AND pc.order_index = 5
 -- 7. Add assessment_option for Module 2 Quiz questions
 -- ---------------------------------------------------------------------------
 INSERT INTO assessment_option (question_id, option_text, is_correct)
-SELECT q.id, 'Vitamin C', 0 FROM assessment_question q
+SELECT q.id, 'Vitamin C', 1 FROM assessment_question q
 JOIN assessment a ON q.assessment_id = a.id
 JOIN product_content pc ON a.product_content_id = pc.id
 WHERE pc.product_id = 1 AND pc.order_index = 5 AND q.question_text LIKE '%vitamin%'
@@ -112,7 +112,7 @@ WHERE pc.product_id = 1 AND pc.order_index = 5 AND q.question_text LIKE '%vitami
   AND NOT EXISTS (SELECT 1 FROM assessment_option ao WHERE ao.question_id = q.id AND ao.option_text = 'Vitamin E');
 
 INSERT INTO assessment_option (question_id, option_text, is_correct)
-SELECT q.id, 'Niacinamide', 1 FROM assessment_question q
+SELECT q.id, 'Niacinamide', 0 FROM assessment_question q
 JOIN assessment a ON q.assessment_id = a.id
 JOIN product_content pc ON a.product_content_id = pc.id
 WHERE pc.product_id = 1 AND pc.order_index = 5 AND q.question_text LIKE '%vitamin%'

@@ -4,6 +4,7 @@ import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.dto.ProductDetailResponse;
 import com.quantum.edu.common.exception.ApiErrorCode;
 import com.quantum.edu.common.exception.ApiException;
+import com.quantum.edu.lms.LmsCourseProgression;
 import com.quantum.edu.lms.domain.UserLessonProgress;
 import com.quantum.edu.lms.repository.UserLessonProgressRepository;
 import com.quantum.edu.ownership.api.OwnershipApi;
@@ -59,6 +60,14 @@ public class ProgressService {
                 .filter(c -> c.getId().equals(contentId))
                 .findFirst()
                 .orElseThrow(() -> new ApiException(ApiErrorCode.LMS_CONTENT_NOT_FOUND));
+
+        Set<Long> allContentIds = product.getContents().stream()
+                .map(ProductDetailResponse.ContentSummary::getId)
+                .collect(Collectors.toSet());
+        Set<Long> completedContentIds = getCompletedContentIds(userId, allContentIds);
+        if (LmsCourseProgression.isContentLocked(product, completedContentIds, contentId)) {
+            throw new ApiException(ApiErrorCode.LMS_CONTENT_LOCKED);
+        }
 
         if ("ASSESSMENT".equals(content.getContentType())) {
             if (!quizService.hasPassedQuiz(userId, contentId)) {

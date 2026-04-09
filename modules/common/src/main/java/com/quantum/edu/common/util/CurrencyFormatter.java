@@ -43,7 +43,7 @@ public class CurrencyFormatter {
     }
 
     /**
-     * Format amount with currency code (e.g. "INR 1,999"). Used for verify subtotal/taxes/total.
+     * Format amount with currency code (e.g. "INR 1,999"). Used for verify subtotal/total.
      */
     public String formatWithCode(BigDecimal amount) {
         if (amount == null) {

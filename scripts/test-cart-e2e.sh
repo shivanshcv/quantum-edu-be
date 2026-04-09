@@ -162,14 +162,13 @@ else
 fi
 
 # Extract items from verify for checkout (simplified - we build from known product 1)
-# Product 1: price 2999, discount 1999, final 1999, gst ~360
+# Product 1: price 2999, discount 1999, final 1999 (tax-inclusive)
 CHECKOUT_ITEMS_PAID='[
   {
     "productId": 1,
     "price": 2999.00,
     "discountPrice": 1999.00,
     "finalPrice": 1999.00,
-    "gstAmount": 359.82,
     "free": false
   }
 ]'
@@ -232,7 +231,6 @@ if [ -n "$FREE_PRODUCT_ID" ]; then
             \"price\": 0,
             \"discountPrice\": 0,
             \"finalPrice\": 0,
-            \"gstAmount\": 0,
             \"free\": true
           }],
           \"billing\": $BILLING

@@ -123,7 +123,7 @@ public class OrderService {
                     item.getPrice(),
                     item.getDiscountPrice(),
                     item.getFinalPrice(),
-                    item.getGstAmount(),
+                    BigDecimal.ZERO,
                     billing
             );
             order = orderRepository.save(order);
@@ -151,12 +151,12 @@ public class OrderService {
                     item.getPrice(),
                     item.getDiscountPrice(),
                     item.getFinalPrice(),
-                    item.getGstAmount(),
+                    BigDecimal.ZERO,
                     billing
             );
             order = orderRepository.save(order);
             orders.add(order);
-            totalAmount = totalAmount.add(item.getFinalPrice()).add(item.getGstAmount());
+            totalAmount = totalAmount.add(item.getFinalPrice());
         }
         long amountPaise = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
         var razorpayOrder = paymentService.createOrder(amountPaise, currencyFormatter.getCurrencyCode());

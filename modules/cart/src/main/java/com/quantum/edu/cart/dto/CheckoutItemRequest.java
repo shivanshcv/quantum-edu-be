@@ -22,7 +22,5 @@ public class CheckoutItemRequest {
     private BigDecimal discountPrice;
     @NotNull
     private BigDecimal finalPrice;
-    @NotNull
-    private BigDecimal gstAmount;
     private boolean free;
 }

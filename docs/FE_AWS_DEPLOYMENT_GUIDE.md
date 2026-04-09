@@ -283,8 +283,8 @@ sudo docker run -d \
   -e JWT_SECRET=$JWT_SECRET \
   -e APP_CORS_ORIGINS="https://yourdomain.com,https://www.yourdomain.com" \
   -e VERIFICATION_BASE_URL="https://yourdomain.com/verify-email" \
-  -e RAZORPAY_KEY_ID=rzp_test_SLepofnigNDLcv \
-  -e RAZORPAY_KEY_SECRET=QfBuE7002SgcCcF2Jv0jYn1Y \
+  -e RAZORPAY_KEY_ID=rzp_test_Sacsb0DFaG7tCx \
+  -e RAZORPAY_KEY_SECRET=XHiJ0Avh1Y2OmdnyktRcWUZY \
   -e RAZORPAY_WEBHOOK_SECRET=shivansh1234 \
   ${ECR_URI}:latest
 ```

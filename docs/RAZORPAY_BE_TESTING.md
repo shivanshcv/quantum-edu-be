@@ -108,8 +108,7 @@ curl -s -X POST http://localhost:8080/api/v1/bff/checkout \
       "productId": 1,
       "price": 999.00,
       "discountPrice": 799.00,
-      "finalPrice": 799.00,
-      "gstAmount": 143.82
+      "finalPrice": 799.00
     }],
     "billing": {
       "billingName": "Test User",
@@ -130,9 +129,9 @@ curl -s -X POST http://localhost:8080/api/v1/bff/checkout \
   "success": true,
   "response": {
     "razorpayOrderId": "order_xxxxxxxxxxxx",
-    "amount": 94282,
+    "amount": 79900,
     "currency": "INR",
-    "keyId": "rzp_test_SLepofnigNDLcv",
+    "keyId": "rzp_test_Sacsb0DFaG7tCx",
     "orderIds": [101]
   }
 }
@@ -177,11 +176,15 @@ export RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
 # Staging (Cloudflare tunnel)
 ./scripts/test-webhook.sh order_xxxxxxxxxxxx staging
 
+# Production API (same script; set your deployed API origin — use test Razorpay keys on prod only if intentional)
+export QUANTUM_EDU_PROD_WEBHOOK_BASE_URL=https://api.yourdomain.com
+./scripts/test-webhook.sh order_xxxxxxxxxxxx prod
+
 # Custom URL
 ./scripts/test-webhook.sh order_xxxxxxxxxxxx https://your-tunnel.trycloudflare.com
 ```
 
-Staging uses `https://lucia-dream-bids-extensions.trycloudflare.com`. Ensure Razorpay Dashboard webhook URL matches.
+Staging uses `https://lucia-dream-bids-extensions.trycloudflare.com`. Ensure Razorpay Dashboard webhook URL matches. For `prod`, `QUANTUM_EDU_PROD_WEBHOOK_BASE_URL` must match where the app is served (scheme + host, no path); `RAZORPAY_WEBHOOK_SECRET` must match production config.
 
 #### Option B: Use ngrok/zrok for Real Webhook Delivery
 
@@ -251,7 +254,7 @@ CHECKOUT=$(curl -s -X POST $BASE_URL/api/v1/bff/checkout \
   -H "Authorization: Bearer $JWT" \
   -d '{
     "billingInfoPresent": false,
-    "items": [{"productId": 1, "price": 999.00, "discountPrice": 799.00, "finalPrice": 799.00, "gstAmount": 143.82}],
+    "items": [{"productId": 1, "price": 999.00, "discountPrice": 799.00, "finalPrice": 799.00}],
     "billing": {"billingName": "Test", "billingAddressLine1": "123 St", "billingAddressLine2": "", "billingCity": "Mumbai", "billingState": "MH", "billingCountry": "India", "billingPostalCode": "400001", "billingGstNumber": null}
   }')
 echo "$CHECKOUT" | jq .
@@ -264,6 +267,7 @@ echo "5. To test webhook, run:"
 echo "   export RAZORPAY_WEBHOOK_SECRET=<your_secret>"
 echo "   ./scripts/test-webhook.sh $ORDER_ID              # local"
 echo "   ./scripts/test-webhook.sh $ORDER_ID staging     # staging"
+echo "   QUANTUM_EDU_PROD_WEBHOOK_BASE_URL=https://... ./scripts/test-webhook.sh $ORDER_ID prod"
 ```
 
 ---

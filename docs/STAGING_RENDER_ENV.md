@@ -15,7 +15,7 @@ Add these in **Render Dashboard** → Your Service → **Environment** tab.
 | `JWT_SECRET` | `quantum-edu-jwt-secret-key-min-256-bits-for-hs256-algorithm` |
 | `APP_CORS_ORIGINS` | `https://quantum-education.netlify.app` |
 | `VERIFICATION_BASE_URL` | `https://quantum-education.netlify.app/verify-email` |
-| `RAZORPAY_KEY_ID` | `rzp_test_SLepofnigNDLcv` |
+| `RAZORPAY_KEY_ID` | `rzp_test_Sacsb0DFaG7tCx` |
 | `RAZORPAY_KEY_SECRET` | *(same as dev – set as Secret)* |
 | `RAZORPAY_WEBHOOK_SECRET` | *(same as dev)* |
 | `EMAIL_FROM` | `noreply@quantumedu.com` |

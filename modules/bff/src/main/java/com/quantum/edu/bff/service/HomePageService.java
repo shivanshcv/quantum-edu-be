@@ -45,17 +45,10 @@ public class HomePageService {
     private ComponentResponse buildHeroSection() {
         HeroSectionDetails details = HeroSectionDetails.builder()
                 .title(heroProps.getTitle())
-                .headline(HeadlineResponse.builder()
-                        .line1(heroProps.getHeadline().getLine1())
-                        .line2(heroProps.getHeadline().getLine2())
-                        .highlightWord(heroProps.getHeadline().getHighlightWord())
-                        .build())
+                .headline(buildHeadlineResponse())
                 .subtitle(heroProps.getSubtitle())
                 .badge(heroProps.getBadge())
-                .image(ImageResponse.builder()
-                        .src(heroProps.getImage().getSrc())
-                        .alt(heroProps.getImage().getAlt())
-                        .build())
+                .image(buildHeroImageResponse())
                 .stats(heroProps.getStats() != null
                         ? heroProps.getStats().stream().map(s -> StatResponse.builder()
                                 .id(s.getId()).value(s.getValue()).label(s.getLabel()).icon(s.getIcon())
@@ -77,6 +70,29 @@ public class HomePageService {
                 .type("HERO_SECTION")
                 .config(Map.of("theme", "dark", "padding", "large"))
                 .details(details)
+                .build();
+    }
+
+    private HeadlineResponse buildHeadlineResponse() {
+        HeroSectionProperties.Headline h = heroProps.getHeadline();
+        if (h == null) {
+            return HeadlineResponse.builder().line1("").line2("").highlightWord("").build();
+        }
+        return HeadlineResponse.builder()
+                .line1(h.getLine1() != null ? h.getLine1() : "")
+                .line2(h.getLine2() != null ? h.getLine2() : "")
+                .highlightWord(h.getHighlightWord() != null ? h.getHighlightWord() : "")
+                .build();
+    }
+
+    private ImageResponse buildHeroImageResponse() {
+        HeroSectionProperties.Image img = heroProps.getImage();
+        if (img == null) {
+            return ImageResponse.builder().src("").alt("").build();
+        }
+        return ImageResponse.builder()
+                .src(img.getSrc() != null ? img.getSrc() : "")
+                .alt(img.getAlt() != null ? img.getAlt() : "")
                 .build();
     }
 
