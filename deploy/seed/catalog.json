@@ -1,0 +1,886 @@
+{
+  "categories": [
+    { "slug": "laser-therapy", "name": "Laser Therapy", "color": ["#00584B", "#0E8C78"] },
+    { "slug": "skin-science", "name": "Skin Science", "color": ["#7A3E9D", "#B565D8"] },
+    { "slug": "clinical-aesthetics", "name": "Clinical Aesthetics", "color": ["#B4561F", "#E8863F"] },
+    { "slug": "free-masterclasses", "name": "Free Masterclasses", "color": ["#CA8A04", "#FFC300"] }
+  ],
+
+  "instructors": {
+    "meera": {
+      "name": "Dr. Meera Iyer",
+      "role": "Lead Aesthetic Physician",
+      "bio": "Dermatologist with 14+ years of clinical and aesthetic practice across Mumbai and Bengaluru. Meera has trained over 2,000 therapists in evidence-based anti-ageing and pigmentation care and is passionate about safe treatment of Indian skin.",
+      "credentials": ["MBBS, MD (Dermatology)", "Fellowship in Aesthetic Medicine", "14+ years in clinical practice"]
+    },
+    "kavya": {
+      "name": "Kavya Menon",
+      "role": "Senior Laser Therapist & Trainer",
+      "bio": "Kavya has performed more than 10,000 laser sessions and set up laser safety programs for multi-city clinic chains. She specialises in laser hair reduction for darker skin types and in practical, hands-on training.",
+      "credentials": ["Advanced Diploma in Laser Therapy", "Certified Laser Safety Officer", "10,000+ laser sessions performed"]
+    },
+    "arjun": {
+      "name": "Dr. Arjun Rao",
+      "role": "Clinical Cosmetologist",
+      "bio": "Arjun is a cosmetologist focused on chemical peels and acne management. He runs a busy skin clinic in Hyderabad and teaches practitioners how to get great results while keeping complications rare.",
+      "credentials": ["MD (Skin & VD)", "Chemical Peel Specialist", "Speaker at national cosmetology conferences"]
+    }
+  },
+
+  "courses": [
+    {
+      "slug": "laser-hair-reduction-technician",
+      "title": "Certified Laser Hair Reduction Technician",
+      "short": "Become a job-ready laser hair reduction technician with clinic-grade protocols for Indian skin types.",
+      "long": "This 8-week accelerator takes you from laser physics fundamentals to confidently running laser hair reduction sessions in a clinic. You will learn how different wavelengths interact with hair and skin, how to assess clients across the Fitzpatrick types common in India, how to select safe parameters on diode, Nd:YAG and alexandrite systems, and how to manage aftercare and side effects. Every module ends with an assessment so you can prove competence before moving on.",
+      "price": 24999, "discount": 17999, "free": false,
+      "level": "INTERMEDIATE", "published": true, "featured": true,
+      "categories": ["laser-therapy", "clinical-aesthetics"],
+      "instructor": "kavya", "badge": "BESTSELLER",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "8 weeks" },
+        { "icon": "BookOpen", "label": "Curriculum", "value": "6 lessons · 3 assessments" },
+        { "icon": "Award", "label": "Certificate", "value": "Included" }
+      ],
+      "outcomes": [
+        "Explain selective photothermolysis and how wavelength, fluence and pulse duration affect results",
+        "Assess clients using Fitzpatrick skin typing adapted for Indian skin",
+        "Run a structured consultation and identify contraindications",
+        "Select safe starting parameters on diode, Nd:YAG and alexandrite lasers",
+        "Deliver clear aftercare advice and manage common side effects"
+      ],
+      "certification": {
+        "title": "Laser Hair Reduction Technician Certificate",
+        "description": "Pass all three module assessments to earn a certificate you can show to clinics and employers.",
+        "highlights": ["Assessment-backed", "Shareable on LinkedIn", "Recognised by partner clinics"]
+      },
+      "outcomeHighlights": [
+        { "title": "Clinic Ready", "description": "Graduates are prepared to join dermatology and laser clinics as technicians." },
+        { "title": "High-Demand Skill", "description": "Laser hair reduction is one of the fastest-growing aesthetic services in India." },
+        { "title": "Safety First", "description": "Protocols designed specifically for Fitzpatrick types III–V." }
+      ],
+      "modules": [
+        {
+          "title": "Laser Physics & Safety Fundamentals",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "How Lasers Interact with Skin and Hair", "minutes": 18,
+              "summary": "Laser hair reduction works by selective photothermolysis: light energy is absorbed by melanin in the hair follicle and converted to heat, damaging the follicle while sparing the surrounding skin.",
+              "points": [
+                "Wavelength decides which chromophore absorbs the energy: melanin, haemoglobin or water.",
+                "Pulse duration should match the thermal relaxation time of the follicle so heat stays where it is needed.",
+                "Fluence is the energy delivered per square centimetre. Too low is ineffective, too high risks burns.",
+                "Spot size and cooling change how deep the energy travels and how comfortable the treatment feels."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Laser Safety Protocols & Eye Protection", "minutes": 15,
+              "summary": "A practical handout covering the safety controls every laser room needs before the first client walks in.",
+              "points": [
+                "Always use wavelength-specific eyewear with the correct optical density for both the client and the operator.",
+                "Control the treatment room with warning signage, closed doors and no reflective jewellery or surfaces.",
+                "Perform a patch test and wait 24 to 48 hours before a full treatment on new clients.",
+                "Keep a treatment log of settings, skin response and any adverse events for every session."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Which principle explains how a laser damages the hair follicle while sparing the surrounding skin?", "options": ["Selective photothermolysis", "Electrolysis", "Cryolipolysis", "Galvanic current"], "answer": 0 },
+              { "q": "What does 'fluence' describe in laser treatments?", "options": ["The colour of the laser beam", "Energy delivered per square centimetre", "The number of pulses per session", "The cooling temperature of the handpiece"], "answer": 1 },
+              { "q": "Why must both the client and the operator wear wavelength-specific eyewear?", "options": ["It improves treatment results", "It is only required for tattoo removal", "Laser light can cause permanent retinal injury", "It reduces treatment pain"], "answer": 2 }
+            ]
+          }
+        },
+        {
+          "title": "Client Assessment & Skin Typing",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Fitzpatrick Skin Typing for Indian Skin", "minutes": 20,
+              "summary": "Most Indian clients fall between Fitzpatrick types three and five, which changes how aggressively you can treat.",
+              "points": [
+                "The Fitzpatrick scale classifies skin from type I, which always burns, to type VI, which never burns.",
+                "Higher skin types have more epidermal melanin that competes with the follicle for laser energy.",
+                "Longer wavelengths such as 1064 nm Nd:YAG are safer for darker skin because they bypass epidermal melanin.",
+                "Recent tanning temporarily raises the effective skin type and calls for lower settings or postponement."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Consultation, Consent & Contraindications", "minutes": 15,
+              "summary": "Use this checklist to run a structured consultation and identify clients who should not be treated.",
+              "points": [
+                "Record medical history, medications such as isotretinoin or photosensitisers, and any history of keloids.",
+                "Defer treatment during pregnancy, active skin infection or immediately after sun exposure.",
+                "Explain expected results, number of sessions and possible side effects before taking written consent.",
+                "Screen for hormonal conditions such as PCOS that may need more sessions and medical co-management."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Most Indian clients fall within which Fitzpatrick skin type range?", "options": ["Types I–II", "Types III–V", "Type VI only", "Fitzpatrick typing does not apply to Indian skin"], "answer": 1 },
+              { "q": "Which wavelength is generally the safest choice for darker skin types?", "options": ["755 nm alexandrite", "694 nm ruby", "1064 nm Nd:YAG", "532 nm KTP"], "answer": 2 },
+              { "q": "Which of these should defer a laser hair reduction session?", "options": ["Fine hair on the forearms", "Isotretinoin use in the last six months", "Shaving the area the day before", "Having skin type III"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Treatment Protocols & Aftercare",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Choosing Parameters: Diode, Nd:YAG & Alexandrite", "minutes": 22,
+              "summary": "Selecting the right device and parameters is the difference between great results and avoidable complications.",
+              "points": [
+                "Diode lasers around 810 nm balance melanin absorption and depth, making them versatile for types II to IV.",
+                "Alexandrite at 755 nm is highly effective on fair skin with dark hair but riskier on darker skin.",
+                "Start conservatively, look for the endpoint of perifollicular redness and swelling, then adjust.",
+                "Space sessions four to eight weeks apart to target hairs in the active anagen growth phase."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Aftercare & Managing Side Effects", "minutes": 12,
+              "summary": "Aftercare instructions and a quick-reference guide to recognising and handling side effects.",
+              "points": [
+                "Advise broad-spectrum SPF 30 or higher every day and avoid sun exposure for at least two weeks.",
+                "Mild redness and swelling are expected and settle within 24 to 48 hours with cool compresses.",
+                "Blistering, crusting or pigment change are warning signs that need review and parameter correction.",
+                "Avoid waxing or threading between sessions because the laser needs the hair root intact."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "What is the desired clinical endpoint immediately after a laser hair reduction pulse?", "options": ["Blistering of the skin", "Perifollicular redness and swelling", "No skin reaction at all", "Bleeding at the follicle"], "answer": 1 },
+              { "q": "Why are sessions spaced four to eight weeks apart?", "options": ["To let the device cool down", "To target hairs in the anagen growth phase", "Because lasers lose power between sessions", "To allow tanning between sessions"], "answer": 1 },
+              { "q": "Which hair removal method should clients avoid between laser sessions?", "options": ["Shaving", "Trimming", "Waxing", "Clipping with scissors"], "answer": 2 }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "slug": "advanced-skin-rejuvenation",
+      "title": "Advanced Skin Rejuvenation & Anti-Ageing",
+      "short": "Design evidence-based anti-ageing treatment plans combining topicals, in-clinic procedures and lifestyle guidance.",
+      "long": "Built for practising aestheticians and skin therapists who want to move beyond basic facials. You will understand the biology of ageing skin, compare active ingredients such as retinoids, vitamin C and peptides, evaluate in-clinic options like microneedling and radiofrequency, and learn to build structured 12-week rejuvenation plans with realistic expectations and measurable outcomes.",
+      "price": 21999, "discount": 15999, "free": false,
+      "level": "ADVANCED", "published": true, "featured": true,
+      "categories": ["clinical-aesthetics", "skin-science"],
+      "instructor": "meera", "badge": "NEW 2026",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "6 weeks" },
+        { "icon": "BookOpen", "label": "Curriculum", "value": "6 lessons · 3 assessments" },
+        { "icon": "Award", "label": "Level", "value": "Advanced" }
+      ],
+      "outcomes": [
+        "Differentiate intrinsic and extrinsic ageing and explain their visible signs",
+        "Choose between retinoids, vitamin C and peptides for different clients",
+        "Recommend microneedling or radiofrequency with clear indications",
+        "Build and review a 12-week rejuvenation plan with standardised photos",
+        "Set honest expectations that turn first-time clients into long-term clients"
+      ],
+      "certification": {
+        "title": "Advanced Skin Rejuvenation Certificate",
+        "description": "Awarded after completing all modules and passing each assessment.",
+        "highlights": ["Advanced-level credential", "Shareable on LinkedIn"]
+      },
+      "outcomeHighlights": [
+        { "title": "Premium Services", "description": "Offer higher-value anti-ageing programmes instead of one-off facials." },
+        { "title": "Evidence-Based", "description": "Every recommendation is grounded in published dermatology research." }
+      ],
+      "modules": [
+        {
+          "title": "The Science of Skin Ageing",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Intrinsic vs Extrinsic Ageing", "minutes": 16,
+              "summary": "Skin ages through two overlapping processes: the genetic clock we cannot stop, and environmental damage we can control.",
+              "points": [
+                "Intrinsic ageing is driven by genetics and time, gradually thinning the skin and slowing cell turnover.",
+                "Extrinsic ageing comes from UV exposure, pollution, smoking and poor sleep, and causes most visible ageing.",
+                "Photoageing shows up as coarse wrinkles, uneven pigmentation and loss of elasticity.",
+                "Daily sun protection is the single most effective anti-ageing intervention available."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Collagen, Elastin & the Extracellular Matrix", "minutes": 14,
+              "summary": "A reference sheet on the structural proteins that keep skin firm, and how they change with age.",
+              "points": [
+                "Collagen provides tensile strength. Production falls roughly one percent per year from the mid-twenties.",
+                "Elastin allows skin to recoil. UV exposure fragments elastin fibres, which causes sagging.",
+                "Hyaluronic acid binds water in the dermis, keeping skin plump and hydrated.",
+                "Fibroblasts produce these proteins and can be stimulated by retinoids, peptides and controlled injury."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Which factor is responsible for most visible signs of skin ageing?", "options": ["Genetics alone", "UV exposure and other environmental factors", "Drinking water", "Using moisturiser"], "answer": 1 },
+              { "q": "Which structural protein gives skin its tensile strength?", "options": ["Melanin", "Keratin", "Collagen", "Sebum"], "answer": 2 },
+              { "q": "Which cells in the dermis produce collagen and elastin?", "options": ["Melanocytes", "Fibroblasts", "Keratinocytes", "Adipocytes"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Topical & In-Clinic Interventions",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Retinoids, Vitamin C & Peptides", "minutes": 20,
+              "summary": "Three ingredient families have the strongest evidence for improving the signs of ageing.",
+              "points": [
+                "Retinoids increase cell turnover and stimulate collagen, but must be introduced slowly to limit irritation.",
+                "Vitamin C is an antioxidant that brightens skin and supports collagen. It works best in the morning under sunscreen.",
+                "Peptides act as signalling molecules that encourage repair with minimal irritation.",
+                "Combine actives gradually and check tolerance before adding the next product."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Microneedling and Radiofrequency Overview", "minutes": 15,
+              "summary": "Compare two popular collagen-stimulating procedures and when to recommend each.",
+              "points": [
+                "Microneedling creates controlled micro-injuries that trigger the skin's wound-healing response.",
+                "Radiofrequency heats the dermis to tighten existing collagen and stimulate new production.",
+                "Both typically need a course of three to six sessions spaced about four weeks apart.",
+                "Avoid treating active acne, infections, or clients who recently took isotretinoin."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "When is a vitamin C serum best applied?", "options": ["At night only, without sunscreen", "In the morning under sunscreen", "Immediately after a chemical peel", "Only once a week"], "answer": 1 },
+              { "q": "Why should retinoids be introduced gradually?", "options": ["They expire quickly", "To limit irritation while the skin adapts", "They only work after six months", "They make skin oily"], "answer": 1 },
+              { "q": "How does microneedling stimulate collagen?", "options": ["By freezing fat cells", "By creating controlled micro-injuries that trigger wound healing", "By bleaching pigment", "By removing hair follicles"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Building Treatment Plans",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Designing a 12-Week Rejuvenation Plan", "minutes": 18,
+              "summary": "A structured plan turns individual treatments into measurable, lasting results.",
+              "points": [
+                "Start with a baseline assessment and standardised photos under consistent lighting.",
+                "Weeks one to four build the home-care foundation: cleanser, antioxidant, retinoid and sunscreen.",
+                "Weeks five to twelve layer in-clinic procedures once the skin barrier is strong.",
+                "Review progress every four weeks and adjust based on photos and client feedback."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Client Communication & Expectation Setting", "minutes": 10,
+              "summary": "Scripts and tips for honest conversations that build trust and long-term clients.",
+              "points": [
+                "Explain that collagen remodelling takes three to six months to become visible.",
+                "Use before-and-after photos to show realistic, not exaggerated, outcomes.",
+                "Document the agreed plan, costs and aftercare in writing.",
+                "Schedule maintenance sessions to protect results over time."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "What should happen before starting any rejuvenation plan?", "options": ["A baseline assessment with standardised photos", "An immediate deep peel", "A product sale", "Nothing, start treatment directly"], "answer": 0 },
+              { "q": "Why is home care established before in-clinic procedures?", "options": ["Home care is cheaper", "To strengthen the skin barrier first", "In-clinic procedures don't need home care", "To delay results"], "answer": 1 },
+              { "q": "How long does visible collagen remodelling typically take?", "options": ["One day", "One week", "Three to six months", "Five years"], "answer": 2 }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "slug": "chemical-peels-masterclass",
+      "title": "Chemical Peels Masterclass",
+      "short": "Master superficial and medium-depth chemical peels safely, with a special focus on darker skin tones.",
+      "long": "Chemical peels are among the most requested and most profitable treatments in any skin clinic, but they carry real risk when done poorly. This masterclass explains peel chemistry, depth classification and patient selection, then walks you step by step through priming, application, neutralisation and aftercare. You will finish with a complication-management toolkit designed for Indian skin.",
+      "price": 12999, "discount": 9499, "free": false,
+      "level": "INTERMEDIATE", "published": true, "featured": false,
+      "categories": ["clinical-aesthetics"],
+      "instructor": "arjun", "badge": "POPULAR",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "4 weeks" },
+        { "icon": "BookOpen", "label": "Curriculum", "value": "6 lessons · 3 assessments" },
+        { "icon": "Award", "label": "Certificate", "value": "Included" }
+      ],
+      "outcomes": [
+        "Compare AHAs, BHAs and TCA and choose the right agent for each client",
+        "Classify peels by depth and predict downtime",
+        "Prime skin correctly to reduce pigmentation risk",
+        "Perform a superficial peel using a step-by-step protocol",
+        "Recognise and manage peel complications early"
+      ],
+      "certification": {
+        "title": "Chemical Peels Practitioner Certificate",
+        "description": "Complete the masterclass and pass every assessment to receive your certificate.",
+        "highlights": ["Protocol-based training", "Shareable on LinkedIn"]
+      },
+      "outcomeHighlights": [
+        { "title": "Profitable Service", "description": "Add one of the most requested treatments to your service menu." },
+        { "title": "Fewer Complications", "description": "Learn the priming and aftercare steps that prevent most problems." }
+      ],
+      "modules": [
+        {
+          "title": "Peel Chemistry Essentials",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "AHAs, BHAs & TCA Explained", "minutes": 18,
+              "summary": "Each peeling agent behaves differently on the skin, and choosing the right one starts with understanding its chemistry.",
+              "points": [
+                "Alpha hydroxy acids such as glycolic and lactic acid are water-soluble and loosen surface skin cells.",
+                "Beta hydroxy acids such as salicylic acid are oil-soluble, so they penetrate pores and suit acne-prone skin.",
+                "Trichloroacetic acid, or TCA, causes protein coagulation, and its depth depends on concentration.",
+                "Lower pH and higher concentration both increase a peel's strength and its risk."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Peel Depth Classification", "minutes": 12,
+              "summary": "A quick reference for classifying peels by depth, typical agents and downtime.",
+              "points": [
+                "Very superficial peels affect only the stratum corneum, with little or no downtime.",
+                "Superficial peels reach the full epidermis and cause light flaking for a few days.",
+                "Medium-depth peels reach the papillary dermis and need about a week of recovery.",
+                "Deep peels such as phenol reach the reticular dermis and are rarely suitable for darker skin."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Which peeling agent is oil-soluble and well suited to acne-prone skin?", "options": ["Glycolic acid", "Lactic acid", "Salicylic acid", "Mandelic acid"], "answer": 2 },
+              { "q": "How does trichloroacetic acid (TCA) work on the skin?", "options": ["By dissolving oil only", "By causing protein coagulation", "By hydrating the dermis", "By filtering UV light"], "answer": 1 },
+              { "q": "Which peel depth reaches the papillary dermis?", "options": ["Very superficial", "Superficial", "Medium-depth", "None of these"], "answer": 2 }
+            ]
+          }
+        },
+        {
+          "title": "Procedure Walkthrough",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Skin Priming & Pre-Peel Preparation", "minutes": 16,
+              "summary": "Good results start two to four weeks before the peel, with careful priming.",
+              "points": [
+                "Priming with a retinoid or mild acid evens out penetration on the day of the peel.",
+                "Tyrosinase inhibitors such as azelaic acid reduce the risk of post-peel pigmentation in darker skin.",
+                "Stop retinoids three to five days before the procedure to avoid over-penetration.",
+                "Strict sun protection during the priming phase is essential."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Step-by-Step Superficial Peel Protocol", "minutes": 15,
+              "summary": "A printable protocol for performing a superficial glycolic acid peel in the clinic.",
+              "points": [
+                "Cleanse and degrease the skin, then protect sensitive areas around the eyes, nostrils and lips.",
+                "Apply the peel evenly and time it precisely, watching for redness or frosting.",
+                "Neutralise glycolic acid peels with a buffering solution and rinse with cool water.",
+                "Finish with a bland moisturiser and broad-spectrum sunscreen before the client leaves."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Why is skin primed before a chemical peel?", "options": ["To make the peel cheaper", "To even out penetration and reduce pigmentation risk", "To tan the skin", "Priming is unnecessary"], "answer": 1 },
+              { "q": "When should retinoids typically be stopped before a peel?", "options": ["One hour before", "Three to five days before", "Six months before", "They never need to be stopped"], "answer": 1 },
+              { "q": "How is a glycolic acid peel ended?", "options": ["It is left on overnight", "It is neutralised with a buffering solution and rinsed", "It is wiped off with alcohol", "With a hot towel compress"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Safety & Complications",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Post-Inflammatory Hyperpigmentation Risk", "minutes": 15,
+              "summary": "Post-inflammatory hyperpigmentation, or PIH, is the most common peel complication in Indian skin.",
+              "points": [
+                "PIH happens when inflammation triggers melanocytes to overproduce pigment.",
+                "Darker skin types, aggressive peels and sun exposure all increase the risk.",
+                "Choose gentler agents like mandelic or lactic acid, and build strength gradually.",
+                "Treat early PIH with sun protection, tyrosinase inhibitors and patience."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Complication Management Checklist", "minutes": 12,
+              "summary": "What to do when a peel does not go to plan.",
+              "points": [
+                "Excessive stinging or early frosting: neutralise or remove the peel immediately.",
+                "Prolonged redness: apply a calming barrier cream and review after 48 hours.",
+                "Infection or blistering: refer the client to a dermatologist promptly.",
+                "Document every complication and adjust the protocol for future sessions."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "What is the most common chemical peel complication in darker skin types?", "options": ["Hair growth", "Post-inflammatory hyperpigmentation", "Weight gain", "Excessive sweating"], "answer": 1 },
+              { "q": "Which agents are gentler choices for clients at high risk of PIH?", "options": ["Phenol and croton oil", "Mandelic or lactic acid", "70% TCA", "Undiluted salicylic acid paste"], "answer": 1 },
+              { "q": "What should you do if a client shows blistering or signs of infection after a peel?", "options": ["Apply another peel", "Refer to a dermatologist promptly", "Ignore it", "Advise sun exposure"], "answer": 1 }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "slug": "acne-pigmentation-management",
+      "title": "Acne & Pigmentation Management",
+      "short": "Assess, grade and treat acne and pigmentation with combination protocols that deliver visible results.",
+      "long": "Acne and pigmentation are the two concerns that bring the most clients into Indian skin clinics. This course teaches you what drives them, how to grade severity consistently, and how to design combination treatment pathways using topicals, peels, lasers and home care, while knowing exactly when to refer to a dermatologist.",
+      "price": 14999, "discount": 11499, "free": false,
+      "level": "INTERMEDIATE", "published": true, "featured": true,
+      "categories": ["skin-science", "clinical-aesthetics"],
+      "instructor": "meera", "badge": "TRENDING",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "5 weeks" },
+        { "icon": "BookOpen", "label": "Curriculum", "value": "6 lessons · 3 assessments" },
+        { "icon": "Award", "label": "Certificate", "value": "Included" }
+      ],
+      "outcomes": [
+        "Explain the four factors behind acne formation",
+        "Grade acne severity consistently and know when to refer",
+        "Differentiate melasma, PIH and sun damage",
+        "Use a Wood's lamp to judge pigment depth",
+        "Build combination treatment and home-care plans"
+      ],
+      "certification": {
+        "title": "Acne & Pigmentation Specialist Certificate",
+        "description": "Earned after completing every module and assessment in the course.",
+        "highlights": ["Case-based learning", "Shareable on LinkedIn"]
+      },
+      "outcomeHighlights": [
+        { "title": "Most-Requested Concerns", "description": "Confidently handle the concerns clients ask about most." },
+        { "title": "Better Retention", "description": "Structured plans keep clients coming back for follow-ups." }
+      ],
+      "modules": [
+        {
+          "title": "Understanding Acne",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Pathophysiology of Acne", "minutes": 17,
+              "summary": "Acne develops when four factors combine inside the pilosebaceous unit.",
+              "points": [
+                "Excess sebum production, often driven by androgens, creates an oily environment.",
+                "Abnormal shedding of skin cells blocks the follicle and forms a comedone.",
+                "Cutibacterium acnes bacteria multiply inside the blocked follicle.",
+                "Inflammation turns comedones into red papules, pustules, nodules and cysts."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Grading Acne Severity", "minutes": 12,
+              "summary": "A grading worksheet to record acne severity consistently at every visit.",
+              "points": [
+                "Grade one: comedones only, meaning open blackheads and closed whiteheads.",
+                "Grade two: comedones with a few inflamed papules and pustules.",
+                "Grade three: many papules and pustules with occasional nodules.",
+                "Grade four: nodules and cysts with a risk of scarring, which requires dermatologist referral."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "What forms when abnormal shedding of skin cells blocks a follicle?", "options": ["A comedone", "A freckle", "A mole", "A wrinkle"], "answer": 0 },
+              { "q": "Which bacteria are associated with acne?", "options": ["E. coli", "Cutibacterium acnes", "Streptococcus pneumoniae", "Lactobacillus"], "answer": 1 },
+              { "q": "Which acne grade requires referral to a dermatologist?", "options": ["Grade one", "Grade two", "Grade four, with nodules and cysts", "No grade ever needs referral"], "answer": 2 }
+            ]
+          }
+        },
+        {
+          "title": "Pigmentation Disorders",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Melasma, PIH & Sun Damage", "minutes": 18,
+              "summary": "Not all dark patches are the same, and the right treatment depends on the cause.",
+              "points": [
+                "Melasma appears as symmetrical brown patches on the cheeks and forehead, linked to hormones and UV.",
+                "Post-inflammatory hyperpigmentation follows acne, injury or aggressive treatments.",
+                "Solar lentigines are well-defined sun spots caused by cumulative UV exposure.",
+                "Visible light and heat can worsen melasma, so tinted sunscreens are especially helpful."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Wood's Lamp & Pigment Assessment", "minutes": 12,
+              "summary": "How to use a Wood's lamp and a structured assessment to judge pigment depth.",
+              "points": [
+                "Epidermal pigment looks more pronounced under a Wood's lamp, while dermal pigment does not.",
+                "Epidermal pigment responds faster to topicals and peels than dermal pigment.",
+                "Photograph pigment under consistent lighting to track progress.",
+                "Record triggers such as pregnancy, contraceptives and sun exposure."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Which pigmentation pattern is typically symmetrical on the cheeks and forehead?", "options": ["Solar lentigines", "Melasma", "Freckles on the arms", "Vitiligo"], "answer": 1 },
+              { "q": "Under a Wood's lamp, which type of pigment appears more pronounced?", "options": ["Dermal pigment", "Epidermal pigment", "Neither", "Both look identical"], "answer": 1 },
+              { "q": "Why are tinted sunscreens especially helpful for melasma?", "options": ["They smell better", "They also block visible light that can worsen melasma", "They remove pigment instantly", "They replace moisturiser"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Treatment Pathways",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Combining Topicals, Peels & Lasers", "minutes": 20,
+              "summary": "Combination treatment gets better results than any single approach.",
+              "points": [
+                "Start with topicals such as retinoids, azelaic acid or niacinamide to build a foundation.",
+                "Add salicylic or mandelic peels every two to four weeks for active acne and mild pigmentation.",
+                "Consider low-fluence Q-switched Nd:YAG for stubborn pigment, with great caution in melasma.",
+                "Always pair procedures with strict sun protection to prevent relapse."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Home-Care Regimens that Work", "minutes": 10,
+              "summary": "Simple morning and evening routines you can hand to clients.",
+              "points": [
+                "Morning: gentle cleanser, antioxidant serum, oil-free moisturiser and SPF 50.",
+                "Evening: gentle cleanser, a targeted active such as adapalene or azelaic acid, and moisturiser.",
+                "Introduce one new product at a time and patch test it first.",
+                "Avoid picking, harsh scrubs and unverified home remedies."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "How often are superficial salicylic or mandelic peels typically repeated for active acne?", "options": ["Every day", "Every two to four weeks", "Once a year", "Every six months"], "answer": 1 },
+              { "q": "Which measure is essential alongside every pigmentation procedure?", "options": ["Strict sun protection", "Tanning sessions", "Skipping moisturiser", "Daily scrubbing"], "answer": 0 },
+              { "q": "What is the best way to introduce new home-care products?", "options": ["All at once", "One at a time with a patch test", "Only after a laser session", "Mix them together"], "answer": 1 }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "slug": "foundations-of-skin-science",
+      "title": "Foundations of Skin Science",
+      "short": "A free starter course on skin anatomy, skin types and common concerns, the perfect first step into aesthetics.",
+      "long": "New to the beauty and aesthetics industry? Start here. This free course explains how skin is built, what it does, how to identify skin types and the most common concerns you will see in clients. It is also a great way to experience the Quantum Education learning platform before enrolling in a professional programme.",
+      "price": 0, "discount": null, "free": true,
+      "level": "BEGINNER", "published": true, "featured": true,
+      "categories": ["free-masterclasses"],
+      "instructor": "arjun", "badge": "FREE",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "Self-paced" },
+        { "icon": "BookOpen", "label": "Curriculum", "value": "4 lessons · 2 assessments" },
+        { "icon": "Award", "label": "Price", "value": "Free forever" }
+      ],
+      "outcomes": [
+        "Name the three layers of the skin and what each one does",
+        "List the key functions of skin",
+        "Identify normal, oily, dry, combination and sensitive skin",
+        "Recognise the most common skin concerns in Indian clients"
+      ],
+      "certification": {
+        "title": "Skin Science Foundations Badge",
+        "description": "Complete both modules to unlock your foundations badge.",
+        "highlights": ["No cost", "Great first step"]
+      },
+      "outcomeHighlights": [
+        { "title": "Try the Platform", "description": "Experience lessons, PDFs and quizzes before buying a course." },
+        { "title": "Build Your Base", "description": "Every professional course builds on these fundamentals." }
+      ],
+      "modules": [
+        {
+          "title": "Skin Anatomy 101",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "The Layers of the Skin", "minutes": 12,
+              "summary": "Skin is the body's largest organ, made of three main layers with very different jobs.",
+              "points": [
+                "The epidermis is the outer protective layer and contains melanocytes that produce pigment.",
+                "The dermis contains collagen, elastin, blood vessels, hair follicles and sweat glands.",
+                "The hypodermis, or subcutaneous layer, stores fat and cushions the body.",
+                "The epidermis renews itself roughly every 28 days in young adults, and more slowly with age."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Skin Functions Cheat Sheet", "minutes": 8,
+              "summary": "A one-page summary of everything skin does for the body.",
+              "points": [
+                "Protection against microbes, chemicals and UV radiation.",
+                "Temperature regulation through sweating and blood flow.",
+                "Sensation of touch, pressure, pain and temperature.",
+                "Vitamin D synthesis when exposed to sunlight."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 60,
+            "questions": [
+              { "q": "Which skin layer contains melanocytes?", "options": ["Epidermis", "Hypodermis", "Muscle layer", "Bone"], "answer": 0 },
+              { "q": "Which layer contains collagen, blood vessels and hair follicles?", "options": ["Epidermis", "Dermis", "Hypodermis", "Stratum corneum"], "answer": 1 },
+              { "q": "Roughly how often does the epidermis renew in young adults?", "options": ["Every day", "About every 28 days", "Once a year", "It never renews"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Skin Types & Common Concerns",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Identifying Skin Types", "minutes": 14,
+              "summary": "Recognising skin type is the foundation of every recommendation you make.",
+              "points": [
+                "Normal skin is balanced, with small pores and few concerns.",
+                "Oily skin shows shine and enlarged pores, especially across the T-zone.",
+                "Dry skin feels tight and may flake because it produces less oil.",
+                "Combination skin is oily in the T-zone and normal or dry on the cheeks, while sensitive skin reacts easily."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Common Skin Concerns in India", "minutes": 10,
+              "summary": "An overview of the concerns you will see most often in Indian clients.",
+              "points": [
+                "Pigmentation and uneven skin tone, including melasma and tanning.",
+                "Acne and acne marks, often worsened by heat and humidity.",
+                "Dullness and dehydration caused by pollution and sun exposure.",
+                "Unwanted hair, which drives strong demand for laser hair reduction."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 60,
+            "questions": [
+              { "q": "Which skin type shows shine and enlarged pores across the T-zone?", "options": ["Dry", "Oily", "Normal", "Mature"], "answer": 1 },
+              { "q": "How is combination skin usually described?", "options": ["Dry everywhere", "Oily T-zone with normal or dry cheeks", "Oily everywhere", "Always sensitive"], "answer": 1 },
+              { "q": "Which concern drives strong demand for laser hair reduction in India?", "options": ["Unwanted hair", "Wrinkles", "Dry lips", "Brittle nails"], "answer": 0 }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "slug": "laser-safety-officer-essentials",
+      "title": "Laser Safety Officer Essentials",
+      "short": "Learn to run a safe laser clinic: hazard classes, protective controls and daily safety audits.",
+      "long": "Every clinic that operates medical lasers needs someone who understands laser safety. This short course covers laser classifications, nominal hazard zones, protective eyewear and the standard operating procedures that keep clients and staff safe. It is ideal for clinic managers, therapists and anyone preparing to take on laser safety responsibilities.",
+      "price": 4999, "discount": 2999, "free": false,
+      "level": "BEGINNER", "published": true, "featured": false,
+      "categories": ["laser-therapy"],
+      "instructor": "kavya", "badge": "SHORT COURSE",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "2 weeks" },
+        { "icon": "BookOpen", "label": "Curriculum", "value": "4 lessons · 2 assessments" },
+        { "icon": "Award", "label": "Certificate", "value": "Included" }
+      ],
+      "outcomes": [
+        "Explain laser classes and why aesthetic lasers are Class 4",
+        "Map the nominal hazard zone in a treatment room",
+        "Write a practical laser safety SOP",
+        "Run a daily safety audit before treatments begin"
+      ],
+      "certification": {
+        "title": "Laser Safety Essentials Certificate",
+        "description": "Pass both assessments to receive your laser safety certificate.",
+        "highlights": ["Ideal for clinic managers", "Shareable on LinkedIn"]
+      },
+      "outcomeHighlights": [
+        { "title": "Compliance Ready", "description": "Put safety documentation in place before audits and inspections." },
+        { "title": "Safer Teams", "description": "Give every staff member a clear, repeatable safety routine." }
+      ],
+      "modules": [
+        {
+          "title": "Hazards & Classifications",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Laser Classes & Hazard Zones", "minutes": 14,
+              "summary": "Lasers are grouped into classes according to their potential to cause harm.",
+              "points": [
+                "Class 1 lasers are safe under normal use, while Class 4 lasers can injure eyes and skin and ignite materials.",
+                "Almost all aesthetic lasers are Class 4 and need strict controls.",
+                "The nominal hazard zone is the area where exposure can exceed safe limits.",
+                "Reflections from mirrors, jewellery and metal instruments can extend the hazard."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Nominal Hazard Zone Worksheet", "minutes": 10,
+              "summary": "A worksheet to map hazard zones and controls in your treatment room.",
+              "points": [
+                "Mark the treatment chair, laser position and doors on a simple room plan.",
+                "Identify reflective surfaces and cover or remove them.",
+                "List the required eyewear by wavelength and optical density.",
+                "Display warning signs at every entry point while the laser is in use."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "Which laser class do most aesthetic lasers belong to?", "options": ["Class 1", "Class 2", "Class 3R", "Class 4"], "answer": 3 },
+              { "q": "What is the nominal hazard zone?", "options": ["The reception area", "The area where exposure can exceed safe limits", "The parking area", "The waiting room"], "answer": 1 },
+              { "q": "Why should reflective jewellery be removed in the laser room?", "options": ["It is a dress-code rule", "Reflections can extend the hazard to eyes and skin", "It slows the laser down", "It cools the handpiece"], "answer": 1 }
+            ]
+          }
+        },
+        {
+          "title": "Running a Clinic Safety Programme",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "Building a Laser Safety SOP", "minutes": 15,
+              "summary": "A written standard operating procedure makes safety repeatable for every staff member.",
+              "points": [
+                "Define who is authorised to operate each device and how they are trained.",
+                "Include pre-treatment checks for eyewear, signage, device self-test and fire safety.",
+                "Describe exactly what to do in an incident, from eye exposure to burns.",
+                "Review and sign off the SOP at least once a year."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Daily Safety Audit Checklist", "minutes": 8,
+              "summary": "A printable checklist to complete before the first treatment of the day.",
+              "points": [
+                "Eyewear for every wavelength is present, clean and undamaged.",
+                "Warning signs and door interlocks are working.",
+                "Device calibration and self-test are completed and logged.",
+                "The fire extinguisher and first-aid kit are accessible."
+              ]
+            }
+          ],
+          "quiz": {
+            "pass": 70,
+            "questions": [
+              { "q": "What should a laser safety SOP define?", "options": ["Who is authorised to operate each device", "Staff lunch breaks", "Marketing plans", "Product prices"], "answer": 0 },
+              { "q": "How often should a laser safety SOP be reviewed at minimum?", "options": ["Never", "Once a year", "Every ten years", "Only after an accident"], "answer": 1 },
+              { "q": "Which item belongs on a daily safety audit checklist?", "options": ["Checking eyewear is present and undamaged", "Updating social media", "Ordering supplies for the café", "Cleaning the windows"], "answer": 0 }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "slug": "microneedling-collagen-induction",
+      "title": "Microneedling & Collagen Induction Therapy",
+      "short": "Coming soon: a hands-on guide to microneedling for scars, texture and fine lines.",
+      "long": "This course is still being produced. It will cover device selection, needle depth, combining microneedling with serums and growth factors, and safe protocols for acne scarring on darker skin types.",
+      "price": 16999, "discount": 12999, "free": false,
+      "level": "ADVANCED", "published": false, "featured": false,
+      "categories": ["clinical-aesthetics"],
+      "instructor": "meera", "badge": "COMING SOON",
+      "highlights": [
+        { "icon": "Clock", "label": "Duration", "value": "4 weeks" },
+        { "icon": "Award", "label": "Level", "value": "Advanced" }
+      ],
+      "outcomes": [
+        "Choose between pen, roller and RF microneedling devices",
+        "Select needle depth by indication and facial zone"
+      ],
+      "certification": {
+        "title": "Microneedling Practitioner Certificate",
+        "description": "Available when the course launches.",
+        "highlights": ["Coming soon"]
+      },
+      "outcomeHighlights": [
+        { "title": "Scar Revision", "description": "Treat one of the most requested concerns after acne." }
+      ],
+      "modules": [
+        {
+          "title": "Introduction to Collagen Induction",
+          "lessons": [
+            {
+              "type": "VIDEO", "title": "How Microneedling Works", "minutes": 15,
+              "summary": "Microneedling uses fine needles to create controlled channels in the skin that kick-start collagen production.",
+              "points": [
+                "Each micro-channel triggers inflammation, proliferation and remodelling phases of healing.",
+                "Needle depth is chosen by indication, from 0.25 mm for texture to 1.5 mm or more for scars.",
+                "Topical serums penetrate far better through freshly created channels.",
+                "Results build over a course of sessions spaced about four weeks apart."
+              ]
+            },
+            {
+              "type": "PDF", "title": "Device Selection & Needle Depth Guide", "minutes": 12,
+              "summary": "A comparison of microneedling devices and a needle depth reference by facial zone.",
+              "points": [
+                "Dermarollers are inexpensive but give less control over depth and angle.",
+                "Automated pens allow precise depth adjustment and faster, more even treatment.",
+                "RF microneedling adds heat for extra tightening and scar remodelling.",
+                "Use shallower depths on the forehead and around the eyes, and deeper settings on cheeks for scars."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "demo": {
+    "password": "Demo@12345",
+    "password_hash_note": "Argon2id (t=2, m=65536, p=1, 32-byte hash, 16-byte salt) to match auth/config/Argon2PasswordEncoder",
+    "password_hash": "$argon2id$v=19$m=65536,t=2,p=1$bdvrO9vqIg3hkAuHFq2I2Q$wd5umy0/3JSr26IL+/59o95V5Z1UCpo+JBjMOjKPHqw",
+    "users": [
+      {
+        "email": "demo@example.com", "first": "Ananya", "last": "Kapoor", "phone": "+919820012345", "verified": true,
+        "address": ["12, Lotus Residency, Andheri West", "Mumbai", "Maharashtra", "400053"],
+        "joined_days_ago": 45,
+        "enrollments": [
+          { "course": "foundations-of-skin-science", "days_ago": 44, "progress": "all" },
+          { "course": "laser-hair-reduction-technician", "days_ago": 30, "progress": 4 },
+          { "course": "laser-safety-officer-essentials", "days_ago": 6, "progress": 0 }
+        ],
+        "cart": ["acne-pigmentation-management"]
+      },
+      {
+        "email": "priya.nair@example.com", "first": "Priya", "last": "Nair", "phone": "+919847011122", "verified": true,
+        "address": ["Flat 4B, Marine Heights, MG Road", "Kochi", "Kerala", "682016"],
+        "joined_days_ago": 60,
+        "enrollments": [
+          { "course": "advanced-skin-rejuvenation", "days_ago": 52, "progress": 6 },
+          { "course": "foundations-of-skin-science", "days_ago": 58, "progress": "all" }
+        ]
+      },
+      {
+        "email": "rahul.verma@example.com", "first": "Rahul", "last": "Verma", "phone": "+919811022233", "verified": true,
+        "address": ["C-21, Lajpat Nagar II", "New Delhi", "Delhi", "110024"],
+        "joined_days_ago": 38,
+        "enrollments": [
+          { "course": "laser-hair-reduction-technician", "days_ago": 35, "progress": 2 }
+        ],
+        "failed_orders": [{ "course": "chemical-peels-masterclass", "days_ago": 12 }]
+      },
+      {
+        "email": "sneha.patil@example.com", "first": "Sneha", "last": "Patil", "phone": "+919890033344", "verified": true,
+        "address": ["Plot 7, Baner Road", "Pune", "Maharashtra", "411045"],
+        "joined_days_ago": 28,
+        "enrollments": [
+          { "course": "chemical-peels-masterclass", "days_ago": 25, "progress": "all" },
+          { "course": "acne-pigmentation-management", "days_ago": 9, "progress": 3 }
+        ]
+      },
+      {
+        "email": "mohammed.irfan@example.com", "first": "Mohammed", "last": "Irfan", "phone": "+919849044455", "verified": true,
+        "address": ["House 3-5-120, Banjara Hills", "Hyderabad", "Telangana", "500034"],
+        "joined_days_ago": 15,
+        "enrollments": [
+          { "course": "foundations-of-skin-science", "days_ago": 14, "progress": 3 }
+        ],
+        "pending_orders": [{ "course": "laser-hair-reduction-technician", "days_ago": 2 }]
+      },
+      {
+        "email": "divya.reddy@example.com", "first": "Divya", "last": "Reddy", "phone": "+919845055566", "verified": true,
+        "address": ["88, 5th Cross, Indiranagar", "Bengaluru", "Karnataka", "560038"],
+        "joined_days_ago": 70,
+        "enrollments": [
+          { "course": "laser-hair-reduction-technician", "days_ago": 66, "progress": "all" },
+          { "course": "advanced-skin-rejuvenation", "days_ago": 40, "progress": 3 },
+          { "course": "acne-pigmentation-management", "days_ago": 20, "progress": 0 }
+        ]
+      },
+      {
+        "email": "karan.singh@example.com", "first": "Karan", "last": "Singh", "phone": "+919815066677", "verified": false,
+        "joined_days_ago": 1,
+        "enrollments": []
+      }
+    ]
+  }
+}

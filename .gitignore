@@ -47,3 +47,10 @@ spring-boot-devtools.properties
 # Deploy secrets (never commit)
 deploy.env
 deploy.prod.env
+deploy.prod.env.*
+!deploy.prod.env.example
+deploy.render.env
+deploy/oracle/.env
+
+# Generated demo media (rebuild with: python3 deploy/seed/build.py media)
+deploy/seed/media/out/

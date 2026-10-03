@@ -25,10 +25,18 @@ RUN mvn clean package -DskipTests -B -q
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-COPY --from=build /app/app/target/quantum-edu-be-app-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/app/target/quantum-edu-be-app-0.0.1-SNAPSHOT.jar /tmp/app.jar
+
+# Class Data Sharing archive from a training run (context refresh only, no DB connection).
+# Cuts startup substantially on small CPUs (e.g. Render free); the JVM ignores the archive if unusable.
+RUN java -Djarmode=tools -jar /tmp/app.jar extract --destination /app \
+    && rm /tmp/app.jar \
+    && SPRING_PROFILES_ACTIVE=prod MYSQL_HOST=localhost JWT_SECRET=cds-training-only-0123456789abcdef0123456789abcdef \
+       java -XX:ArchiveClassesAtExit=app.jsa -Xlog:cds=off -Xlog:cds+dynamic=off -Dspring.context.exit=onRefresh \
+            -Dspring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access=false -jar app.jar
 
 EXPOSE 8080
 # SPRING_PROFILES_ACTIVE=staging set via deploy env vars
 # stdbuf forces line-buffered stdout so docker logs -f shows real-time output (Java buffers when stdout is a pipe)
 # Fallback to plain java if stdbuf is unavailable (e.g. minimal base images)
-ENTRYPOINT ["/bin/sh", "-c", "if command -v stdbuf >/dev/null 2>&1; then exec stdbuf -oL -eL java -jar app.jar; else exec java -jar app.jar; fi"]
+ENTRYPOINT ["/bin/sh", "-c", "if command -v stdbuf >/dev/null 2>&1; then exec stdbuf -oL -eL java -XX:SharedArchiveFile=app.jsa -jar app.jar; else exec java -XX:SharedArchiveFile=app.jsa -jar app.jar; fi"]

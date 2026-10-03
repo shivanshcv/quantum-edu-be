@@ -5,3 +5,11 @@ target/
 .idea/
 *.iml
 .DS_Store
+.vscode/
+.cursor/
+docs/
+scripts/
+deploy/
+deploy.env*
+deploy.prod.env*
+deploy.render.env*

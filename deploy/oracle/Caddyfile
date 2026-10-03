@@ -1,0 +1,17 @@
+{
+	email {$ACME_EMAIL}
+}
+
+{$API_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy backend:8080
+}
+
+{$ADMIN_DOMAIN} {
+	encode zstd gzip
+	# Lesson videos are uploaded through the admin (Django allows up to 150 MB).
+	request_body {
+		max_size 200MB
+	}
+	reverse_proxy admin:8000
+}

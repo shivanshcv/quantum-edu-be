@@ -1,0 +1,134 @@
+# Quantum Education — single-VM production stack (Oracle Cloud Always Free, ARM).
+#
+#   mysql    MySQL 8.4 with both databases (quantum_education + admin_django)
+#   backend  Spring Boot API            -> https://${API_DOMAIN}
+#   admin    Django admin               -> https://${ADMIN_DOMAIN}
+#   caddy    Reverse proxy, automatic Let's Encrypt HTTPS
+#
+# Values come from .env next to this file (deploy.prod.sh copies quantum-edu-be/deploy.prod.env here).
+# Expected layout on the VM:
+#   ~/quantum-edu/quantum-edu-be      (this repo)
+#   ~/quantum-edu/quantum-edu-admin   (admin repo, override with ADMIN_SRC)
+
+name: quantum-edu
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+      MYSQL_APP_USER: ${MYSQL_APP_USER:-quantum}
+      MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD:?set MYSQL_APP_PASSWORD}
+      SEED_SAMPLE_DATA: ${SEED_SAMPLE_DATA:-true}
+      MEDIA_BASE_URL: ${R2_PUBLIC_URL:-https://media.invalid}/seed
+      TZ: Asia/Kolkata
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+      - ../../docs/schema.sql:/seed/schema.sql:ro
+      - ../seed/sample-data.sql:/seed/sample-data.sql:ro
+    # Reachable only from the VM itself (e.g. an SSH tunnel for a DB GUI), never from the internet.
+    ports:
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    mem_limit: 1536m
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    image: quantum-edu-be:latest
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:+ExitOnOutOfMemoryError
+      TZ: Asia/Kolkata
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: quantum_education
+      MYSQL_USER: ${MYSQL_APP_USER:-quantum}
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      APP_CORS_ORIGINS: ${FRONTEND_URL:?set FRONTEND_URL}${EXTRA_CORS_ORIGINS:+,${EXTRA_CORS_ORIGINS}}
+      VERIFICATION_BASE_URL: ${FRONTEND_URL}/verify-email
+      APP_EMAIL_ENABLED: ${APP_EMAIL_ENABLED:-true}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+    expose:
+      - "8080"
+    mem_limit: 1g
+
+  admin:
+    build:
+      context: ${ADMIN_SRC:-../../../quantum-edu-admin}
+    image: quantum-edu-admin:latest
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: quantum_admin.settings.prod
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY}
+      ALLOWED_HOSTS: ${ADMIN_DOMAIN:?set ADMIN_DOMAIN}
+      CSRF_TRUSTED_ORIGINS: https://${ADMIN_DOMAIN}
+      TZ: Asia/Kolkata
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_USER: ${MYSQL_APP_USER:-quantum}
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD}
+      MYSQL_DATABASE: quantum_education
+      MYSQL_ADMIN_DB: admin_django
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-}
+      DEMO_VIEWER_USERNAME: ${DEMO_VIEWER_USERNAME:-}
+      DEMO_VIEWER_PASSWORD: ${DEMO_VIEWER_PASSWORD:-}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-quantum-edu-media}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
+    expose:
+      - "8000"
+    mem_limit: 512m
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - admin
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?set API_DOMAIN}
+      ADMIN_DOMAIN: ${ADMIN_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    mem_limit: 256m
+
+volumes:
+  mysql-data:
+  caddy-data:
+  caddy-config:
