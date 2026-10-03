@@ -1,0 +1,8 @@
+question_number,question_text,option_order,option_text,is_correct
+1,"Example: Replace this stem with your real question text.",1,"First answer choice (wrong)",false
+1,"Example: Replace this stem with your real question text.",2,"Second answer choice (correct)",true
+1,"Example: Replace this stem with your real question text.",3,"Third answer choice (wrong)",false
+2,"Another question stem goes here.",1,"Option A",false
+2,"Another question stem goes here.",2,"Option B",true
+2,"Another question stem goes here.",3,"Option C",false
+2,"Another question stem goes here.",4,"Option D",false

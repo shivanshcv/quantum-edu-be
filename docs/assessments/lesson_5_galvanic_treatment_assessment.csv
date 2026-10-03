@@ -1,0 +1,61 @@
+question_number,question_text,option_order,option_text,is_correct
+1,"What type of current is used in a galvanic facial machine?",1,"Alternating current",false
+1,"What type of current is used in a galvanic facial machine?",2,"Direct current",true
+1,"What type of current is used in a galvanic facial machine?",3,"High-frequency current",false
+1,"What type of current is used in a galvanic facial machine?",4,"Pulsed current",false
+2,"In galvanic treatment, the electrode used on the client's face is called:",1,"Passive electrode",false
+2,"In galvanic treatment, the electrode used on the client's face is called:",2,"Neutral electrode",false
+2,"In galvanic treatment, the electrode used on the client's face is called:",3,"Active electrode",true
+2,"In galvanic treatment, the electrode used on the client's face is called:",4,"Indirect electrode",false
+3,"The electrode held by the client to complete the circuit is called:",1,"Active electrode",false
+3,"The electrode held by the client to complete the circuit is called:",2,"Passive electrode",true
+3,"The electrode held by the client to complete the circuit is called:",3,"Metal electrode",false
+3,"The electrode held by the client to complete the circuit is called:",4,"Surface electrode",false
+4,"Desincrustation is mainly used for:",1,"Skin tightening",false
+4,"Desincrustation is mainly used for:",2,"Deep cleansing",true
+4,"Desincrustation is mainly used for:",3,"Hair removal",false
+4,"Desincrustation is mainly used for:",4,"Pigmentation treatment",false
+5,"Which polarity is used during desincrustation?",1,"Positive",false
+5,"Which polarity is used during desincrustation?",2,"Negative",true
+5,"Which polarity is used during desincrustation?",3,"Alternating",false
+5,"Which polarity is used during desincrustation?",4,"Neutral",false
+6,"The main purpose of desincrustation is to:",1,"Hydrate the skin",false
+6,"The main purpose of desincrustation is to:",2,"Remove dead cells",false
+6,"The main purpose of desincrustation is to:",3,"Soften sebum and blackheads",true
+6,"The main purpose of desincrustation is to:",4,"Increase melanin production",false
+7,"Which solution is commonly used during desincrustation?",1,"Oil solution",false
+7,"Which solution is commonly used during desincrustation?",2,"Alcohol solution",false
+7,"Which solution is commonly used during desincrustation?",3,"Electrolyte solution",true
+7,"Which solution is commonly used during desincrustation?",4,"Perfume solution",false
+8,"Salt water used in desincrustation acts as:",1,"A moisturizer",false
+8,"Salt water used in desincrustation acts as:",2,"An exfoliant",false
+8,"Salt water used in desincrustation acts as:",3,"An electrolyte",true
+8,"Salt water used in desincrustation acts as:",4,"A toner",false
+9,"Iontophoresis is used to:",1,"Remove hair",false
+9,"Iontophoresis is used to:",2,"Push skincare products into the skin",true
+9,"Iontophoresis is used to:",3,"Reduce hair growth",false
+9,"Iontophoresis is used to:",4,"Bleach the skin",false
+10,"Which polarity is commonly used in iontophoresis for product penetration?",1,"Positive",true
+10,"Which polarity is commonly used in iontophoresis for product penetration?",2,"Negative",false
+10,"Which polarity is commonly used in iontophoresis for product penetration?",3,"Alternating",false
+10,"Which polarity is commonly used in iontophoresis for product penetration?",4,"Neutral",false
+11,"Which type of products are used during iontophoresis?",1,"Oil-based products",false
+11,"Which type of products are used during iontophoresis?",2,"Powder products",false
+11,"Which type of products are used during iontophoresis?",3,"Conductive gels or serums",true
+11,"Which type of products are used during iontophoresis?",4,"Dry creams",false
+12,"The typical intensity range of galvanic current is:",1,"1–5 mA",true
+12,"The typical intensity range of galvanic current is:",2,"10–20 mA",false
+12,"The typical intensity range of galvanic current is:",3,"50–100 mA",false
+12,"The typical intensity range of galvanic current is:",4,"200–500 mA",false
+13,"Which of the following is a benefit of galvanic facial treatment?",1,"Hair growth",false
+13,"Which of the following is a benefit of galvanic facial treatment?",2,"Deep cleansing",true
+13,"Which of the following is a benefit of galvanic facial treatment?",3,"Skin burning",false
+13,"Which of the following is a benefit of galvanic facial treatment?",4,"Skin infection",false
+14,"Galvanic treatment should NOT be performed on clients with:",1,"Oily skin",false
+14,"Galvanic treatment should NOT be performed on clients with:",2,"Acne",false
+14,"Galvanic treatment should NOT be performed on clients with:",3,"Pacemakers",true
+14,"Galvanic treatment should NOT be performed on clients with:",4,"Dull skin",false
+15,"Cotton pledgets on electrodes must be moistened to:",1,"Increase color",false
+15,"Cotton pledgets on electrodes must be moistened to:",2,"Conduct electricity safely",true
+15,"Cotton pledgets on electrodes must be moistened to:",3,"Reduce temperature",false
+15,"Cotton pledgets on electrodes must be moistened to:",4,"Add fragrance",false

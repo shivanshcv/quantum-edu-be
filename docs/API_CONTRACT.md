@@ -2223,6 +2223,8 @@ curl -s http://localhost:8080/pages/home
 
 - **HERO_SECTION**: Static content from application properties (`bff.home.hero.`*).
 - **CARD_GRID**: Dynamic content from Product Catalogue. Sections are populated from products that are both `published = true` AND `featured = true`.
+- **priceDetails** (featured cards): `price` is the formatted amount the customer pays. When there is a genuine sale (positive list price and positive `discountPrice` strictly less than list), `originalPrice` is included as the formatted list/MRP for strikethrough UI; otherwise `originalPrice` is omitted. Same shape is used on **Courses** (`COURSE_CATALOG` sections) and **PDP** (`COURSE_HERO_DETAILS`). The **Cart** page product summary still sends only `priceDetails.price` (no `originalPrice`).
+- **Raw decimals on cards & PDP hero:** Each catalogue card (`sections[]` item) and `COURSE_HERO_DETAILS` also include optional numeric `price` (list/MRP) and `discountPrice` when the catalogue has them, so the FE can render strikethrough if needed. Cart product rows keep numeric `price` / `discountPrice` as before (unchanged contract aside from this note).
 - **Enroll Now CTA**: URL format is `/course/{productId}` (PDP page route).
 - To mark a product as featured: `PATCH /api/v1/admin/catalogue/setFeatured/{id}` with `{ "featured": true }`.
 
@@ -2719,6 +2721,7 @@ BFF calls Cart's getCart API, then fetches product details from Product Catalogu
 | price            | number | Raw base price (decimal). Use for calculations.                             |
 | discountPrice    | number | Discounted price (nullable). Use for calculations.                         |
 | priceDetails.price | string | Formatted display price (e.g. `₹799`, `₹1,299`). Use for UI display.         |
+| priceDetails.originalPrice | string (optional) | Cart page: omitted. Home/Catalog/PDP: formatted list/MRP when on sale (see home page notes). |
 
 #### Sample cURL
 

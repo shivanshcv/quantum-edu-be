@@ -5,11 +5,11 @@ import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.dto.CategoryResponse;
 import com.quantum.edu.catalogue.dto.ProductListResponse;
+import com.quantum.edu.bff.util.ProductPriceDetailsFactory;
 import com.quantum.edu.common.util.CurrencyFormatter;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -92,11 +92,6 @@ public class CoursesPageService {
                 ? product.getCategories().get(0).getSlug()
                 : null;
 
-        BigDecimal displayPrice = product.getDiscountPrice() != null
-                && product.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
-                ? product.getDiscountPrice()
-                : product.getPrice();
-
         return CardSection.builder()
                 .id(product.getId())
                 .title(product.getTitle())
@@ -106,9 +101,10 @@ public class CoursesPageService {
                         .src(product.getThumbnailUrl())
                         .alt(product.getTitle())
                         .build())
-                .priceDetails(PriceDetailsResponse.builder()
-                        .price(currencyFormatter.format(displayPrice))
-                        .build())
+                .price(product.getPrice())
+                .discountPrice(product.getDiscountPrice())
+                .priceDetails(ProductPriceDetailsFactory.forCatalogSurface(
+                        product.getPrice(), product.getDiscountPrice(), currencyFormatter))
                 .ctas(List.of(CtaResponse.builder()
                         .label("Enroll Now")
                         .url("/course/" + product.getId())

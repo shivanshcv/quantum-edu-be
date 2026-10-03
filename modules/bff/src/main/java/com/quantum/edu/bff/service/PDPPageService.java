@@ -4,10 +4,10 @@ import com.quantum.edu.bff.dto.*;
 import com.quantum.edu.catalogue.api.ProductCatalogueApi;
 import com.quantum.edu.catalogue.domain.ProductAttributes;
 import com.quantum.edu.catalogue.dto.ProductDetailResponse;
+import com.quantum.edu.bff.util.ProductPriceDetailsFactory;
 import com.quantum.edu.common.util.CurrencyFormatter;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,12 +65,6 @@ public class PDPPageService {
                     .toList();
         }
 
-        BigDecimal displayPrice = product.getDiscountPrice() != null
-                && product.getDiscountPrice().compareTo(BigDecimal.ZERO) > 0
-                ? product.getDiscountPrice()
-                : product.getPrice();
-        String priceStr = currencyFormatter.format(displayPrice);
-
         String badge = (attrs != null && attrs.getBadge() != null) ? attrs.getBadge() : null;
 
         CourseHeroDetails details = CourseHeroDetails.builder()
@@ -83,7 +77,10 @@ public class PDPPageService {
                         .alt(product.getTitle())
                         .build())
                 .highlights(highlights)
-                .priceDetails(PriceDetailsResponse.builder().price(priceStr).build())
+                .price(product.getPrice())
+                .discountPrice(product.getDiscountPrice())
+                .priceDetails(ProductPriceDetailsFactory.forCatalogSurface(
+                        product.getPrice(), product.getDiscountPrice(), currencyFormatter))
                 .ctas(List.of(
                         CtaResponse.builder()
                                 .label("Add to Cart")
